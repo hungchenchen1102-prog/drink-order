@@ -212,7 +212,7 @@
 
     <script>
         // CONFIGURATION: Replace with your Google Apps Script Web App URL
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxbVt4uCDG8Uv6iyp09AzzLGQ8WaZyrYoXFqfAUnH0mVQS6Np_IPNasNeCnb0HQG9HJ1g/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwT8-B6lMSm0udwiprw6nkaG8D_JbNsgaXISffXlCbg0qSkNlF2CzvG5oXCuEFIdksXqA/exec';
 
         let currentShop = "";
         let currentItem = null;
@@ -220,7 +220,7 @@
 
         window.onload = async function () {
             // Check if API_URL is set
-            if (API_URL === 'https://script.google.com/macros/s/AKfycbxbVt4uCDG8Uv6iyp09AzzLGQ8WaZyrYoXFqfAUnH0mVQS6Np_IPNasNeCnb0HQG9HJ1g/exec') {
+            if (API_URL === 'https://script.google.com/macros/s/AKfycbwT8-B6lMSm0udwiprw6nkaG8D_JbNsgaXISffXlCbg0qSkNlF2CzvG5oXCuEFIdksXqA/exec') {
                 console.warn('Please update API_URL in index.html');
             }
             await initializeLiff();
@@ -335,10 +335,26 @@
             menuItems.forEach(item => {
                 const el = document.createElement('div');
                 el.className = 'menu-item';
+
+                // 計算價格顯示
+                let priceDisplay = '';
+                const hasM = item.priceM && item.priceM !== '-';
+                const hasL = item.priceL && item.priceL !== '-';
+
+                if (hasM && hasL) {
+                    priceDisplay = `$${item.priceM} - $${item.priceL}`;
+                } else if (hasM) {
+                    priceDisplay = `$${item.priceM} (僅M杯)`;
+                } else if (hasL) {
+                    priceDisplay = `$${item.priceL} (僅L杯)`;
+                } else {
+                    priceDisplay = '價格未設定';
+                }
+
                 el.innerHTML = `
                     <div class="item-info">
                         <div class="item-name">${item.item}</div>
-                        <div class="item-price">$${item.price}</div>
+                        <div class="item-price">${priceDisplay}</div>
                     </div>
                     <button class="add-btn" onclick='openModal(${JSON.stringify(item)})'>+</button>
                 `;
@@ -349,6 +365,33 @@
         function openModal(item) {
             currentItem = item;
             document.getElementById('modal-item-name').innerText = item.item;
+
+            // 動態生成尺寸選項
+            const sizeSelect = document.getElementById('size-select');
+            sizeSelect.innerHTML = '';
+
+            const hasM = item.priceM && item.priceM !== '-';
+            const hasL = item.priceL && item.priceL !== '-';
+
+            if (hasM) {
+                const optionM = document.createElement('option');
+                optionM.value = 'M';
+                optionM.textContent = `中杯 (M) - $${item.priceM}`;
+                sizeSelect.appendChild(optionM);
+            }
+
+            if (hasL) {
+                const optionL = document.createElement('option');
+                optionL.value = 'L';
+                optionL.textContent = `大杯 (L) - $${item.priceL}`;
+                sizeSelect.appendChild(optionL);
+            }
+
+            if (!hasM && !hasL) {
+                alert('此品項暫無可用尺寸');
+                return;
+            }
+
             document.getElementById('options-modal').style.display = 'block';
         }
 
@@ -362,9 +405,20 @@
             const sugar = document.getElementById('sugar-select').value;
             const ice = document.getElementById('ice-select').value;
 
+            // 根據選擇的尺寸設定價格
+            let price = 0;
+            if (size === 'M') {
+                price = currentItem.priceM;
+            } else if (size === 'L') {
+                price = currentItem.priceL;
+            }
+
             cart.push({
-                ...currentItem,
-                size, sugar, ice
+                name: currentItem.item,
+                size,
+                sugar,
+                ice,
+                price: price
             });
 
             updateCartUI();
@@ -372,7 +426,10 @@
         }
 
         function updateCartUI() {
-            const total = cart.reduce((sum, item) => sum + parseInt(item.price || 0), 0);
+            const total = cart.reduce((sum, item) => {
+                const itemPrice = typeof item.price === 'string' ? parseInt(item.price) : item.price;
+                return sum + (itemPrice || 0);
+            }, 0);
             document.getElementById('total-price').innerText = total;
             document.getElementById('cart-count').innerText = cart.length;
 
@@ -451,5 +508,3 @@
 </body>
 
 </html>
-
-
