@@ -220,7 +220,7 @@
 
         window.onload = async function () {
             // Check if API_URL is set
-            if (API_URL === 'https://script.google.com/macros/s/AKfycbxbVt4uCDG8Uv6iyp09AzzLGQ8WaZyrYoXFqfAUnH0mVQS6Np_IPNasNeCnb0HQG9HJ1g/exec'){
+            if (API_URL === 'https://script.google.com/macros/s/AKfycbxbVt4uCDG8Uv6iyp09AzzLGQ8WaZyrYoXFqfAUnH0mVQS6Np_IPNasNeCnb0HQG9HJ1g/exec') {
                 console.warn('Please update API_URL in index.html');
             }
             await initializeLiff();
@@ -440,6 +440,17 @@
             }
         }
 
+        function getUserId() {
+            // 檢查 localStorage 中是否已有 userId
+            let localUserId = localStorage.getItem('drinkOrderUserId');
+            if (!localUserId) {
+                // 產生新的唯一 ID (使用時間戳記 + 隨機數)
+                localUserId = 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('drinkOrderUserId', localUserId);
+            }
+            return localUserId;
+        }
+
         function submitOrder() {
             if (cart.length === 0) return;
 
@@ -447,18 +458,20 @@
             btn.disabled = true;
             btn.innerText = '處理中...';
 
-            let userId = 'guest_id';
-            let displayName = 'Guest User';
-
             if (liff.isInClient() && liff.isLoggedIn()) {
+                // LIFF 環境：使用真實的 LINE 使用者資訊
                 liff.getProfile().then(profile => {
                     sendOrderToBackend(profile.userId, profile.displayName);
                 }).catch(err => {
                     console.warn('Profile fetch failed:', err);
-                    sendOrderToBackend(userId, displayName + ' (Error)');
+                    // 如果失敗，使用 localStorage 的 ID
+                    const fallbackId = getUserId();
+                    sendOrderToBackend(fallbackId, 'LINE User (Error)');
                 });
             } else {
-                sendOrderToBackend(userId, displayName + ' (Web)');
+                // 電腦瀏覽器：使用 localStorage 持久化的 ID
+                const webUserId = getUserId();
+                sendOrderToBackend(webUserId, 'Web User');
             }
         }
 
