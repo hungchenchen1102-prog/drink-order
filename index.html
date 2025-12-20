@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <!-- LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>點餐系統</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .item-price {
+            color: #e54d42;
+            font-weight: bold;
+        }
+
+        .add-btn {
+            background: #00B900;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 20% auto;
+            padding: 20px;
+            width: 85%;
+            border-radius: 12px;
+        }
+
+        .modal h3 {
+            margin-top: 0;
+        }
+
+        .option-group {
+            margin-bottom: 15px;
+        }
+
+        .option-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .submit-btn {
+            background: #00B900;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #loading {
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading">載入中...</div>
+
+    <div id="app" class="container hidden">
+        <h2 id="shop-title">飲料店</h2>
+        <div id="menu-list"></div>
+    </div>
+
+    <!-- Options Modal -->
+    <div id="options-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-item-name"></h3>
+
+            <div class="option-group">
+                <label>尺寸</label>
+                <select id="size-select">
+                    <option value="M">中杯 (M)</option>
+                    <option value="L">大杯 (L)</option>
+                </select>
+            </div>
+
+            <div class="option-group">
+                <label>甜度</label>
+                <select id="sugar-select">
+                    <option value="正常糖">正常糖</option>
+                    <option value="少糖">少糖</option>
+                    <option value="半糖">半糖</option>
+                    <option value="微糖">微糖</option>
+                    <option value="無糖">無糖</option>
+                </select>
+            </div>
+
+            <div class="option-group">
+                <label>冰塊</label>
+                <select id="ice-select">
+                    <option value="正常冰">正常冰</option>
+                    <option value="少冰">少冰</option>
+                    <option value="微冰">微冰</option>
+                    <option value="去冰">去冰</option>
+                    <option value="熱">熱</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closeModal()"
+                    style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px;">取消</button>
+                <button onclick="confirmItem()"
+                    style="flex: 1; padding: 10px; background-color: #00B900; color: white; border: none; border-radius: 4px;">加入購物車</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Bar -->
+    <div id="cart-bar" class="cart-bar hidden">
+        <div style="width: 100%">
+            <div class="cart-total">總計: $<span id="total-price">0</span></div>
+            <button onclick="submitOrder()" class="submit-btn" id="submit-btn">送出訂單 (<span
+                    id="cart-count">0</span>)</button>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURATION: Replace with your Google Apps Script Web App URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwT8-B6lMSm0udwiprw6nkaG8D_JbNsgaXISffXlCbg0qSkNlF2CzvG5oXCuEFIdksXqA/exec';
+
+        let currentShop = "";
+        let currentItem = null;
+        let cart = [];
+
+        window.onload = async function () {
+            // Check if API_URL is set
+            if (API_URL === 'https://script.google.com/macros/s/AKfycbwT8-B6lMSm0udwiprw6nkaG8D_JbNsgaXISffXlCbg0qSkNlF2CzvG5oXCuEFIdksXqA/exec') {
+                console.warn('Please update API_URL in index.html');
+            }
+            await initializeLiff();
+        };
+
+        async function initializeLiff() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                currentShop = urlParams.get('shop');
+
+                // Try to Initialize LIFF
+                try {
+                    await liff.init({ liffId: "YOUR_LIFF_ID" });
+                } catch (liffErr) {
+                    console.log('LIFF init warning:', liffErr);
+                }
+
+                if (currentShop) {
+                    document.getElementById('shop-title').innerText = currentShop;
+                    loadMenu(currentShop);
+                } else {
+                    document.getElementById('shop-title').innerText = '請選擇店家';
+                    loadShopList();
+                }
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                alert('初始化錯誤: ' + err);
+            }
+        }
+
+        async function loadShopList() {
+            try {
+                const res = await fetch(`${API_URL}?action=getShopList`);
+                if (!res.ok) throw new Error('Network response was not ok');
+                const shops = await res.json();
+                renderShopSelection(shops);
+            } catch (err) {
+                console.error(err);
+                alert('無法讀取店家列表。請確認:\n1. GAS 已部署為 Web App (Anyone)\n2. API_URL 設定正確');
+            }
+        }
+
+        async function loadMenu(shop) {
+            document.getElementById('loading').classList.remove('hidden');
+            try {
+                const res = await fetch(`${API_URL}?action=getMenu&shop=${encodeURIComponent(shop)}`);
+                if (!res.ok) throw new Error('Network response was not ok');
+                const menuItems = await res.json();
+                renderMenu(menuItems);
+            } catch (err) {
+                alert("讀取菜單失敗: " + err);
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        function renderShopSelection(shops) {
+            const list = document.getElementById('menu-list');
+            list.innerHTML = '';
+
+            if (!shops || shops.length === 0) {
+                list.innerHTML = '<p style="text-align: center;">找不到任何店家，請檢查 API 回傳。</p>';
+                return;
+            }
+
+            shops.forEach(shop => {
+                const btn = document.createElement('button');
+                btn.className = 'submit-btn';
+                btn.style.marginBottom = '10px';
+                btn.style.backgroundColor = '#00B900';
+                btn.innerText = shop;
+                btn.onclick = function () {
+                    currentShop = shop;
+                    document.getElementById('shop-title').innerText = currentShop;
+                    loadMenu(currentShop);
+                };
+                list.appendChild(btn);
+            });
+        }
+
+        function renderMenu(menuItems) {
+            document.getElementById('loading').classList.add('hidden');
+            const list = document.getElementById('menu-list');
+            list.innerHTML = '';
+
+            if (!menuItems || menuItems.length === 0) {
+                list.innerHTML = `<p style="text-align: center; color: #888;">"${currentShop}" 暫無菜單</p>`;
+                return;
+            }
+
+            menuItems.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'menu-item';
+                el.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.item}</div>
+                        <div class="item-price">$${item.price}</div>
+                    </div>
+                    <button class="add-btn" onclick='openModal(${JSON.stringify(item)})'>+</button>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function openModal(item) {
+            currentItem = item;
+            document.getElementById('modal-item-name').innerText = item.item;
+            document.getElementById('options-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('options-modal').style.display = 'none';
+            currentItem = null;
+        }
+
+        function confirmItem() {
+            const size = document.getElementById('size-select').value;
+            const sugar = document.getElementById('sugar-select').value;
+            const ice = document.getElementById('ice-select').value;
+
+            cart.push({
+                ...currentItem,
+                size, sugar, ice
+            });
+
+            updateCartUI();
+            closeModal();
+        }
+
+        function updateCartUI() {
+            const total = cart.reduce((sum, item) => sum + parseInt(item.price || 0), 0);
+            document.getElementById('total-price').innerText = total;
+            document.getElementById('cart-count').innerText = cart.length;
+
+            if (cart.length > 0) {
+                document.getElementById('cart-bar').classList.remove('hidden');
+            } else {
+                document.getElementById('cart-bar').classList.add('hidden');
+            }
+        }
+
+        function submitOrder() {
+            if (cart.length === 0) return;
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerText = '處理中...';
+
+            let userId = 'guest_id';
+            let displayName = 'Guest User';
+
+            if (liff.isInClient() && liff.isLoggedIn()) {
+                liff.getProfile().then(profile => {
+                    sendOrderToBackend(profile.userId, profile.displayName);
+                }).catch(err => {
+                    console.warn('Profile fetch failed:', err);
+                    sendOrderToBackend(userId, displayName + ' (Error)');
+                });
+            } else {
+                sendOrderToBackend(userId, displayName + ' (Web)');
+            }
+        }
+
+        async function sendOrderToBackend(userId, userName) {
+            const btn = document.getElementById('submit-btn');
+            const orderData = {
+                userId: userId,
+                userName: userName,
+                shop: currentShop,
+                items: cart
+            };
+
+            const payload = {
+                action: 'saveOrder',
+                data: orderData
+            };
+
+            try {
+                // Use text/plain to avoid CORS preflight (Simple Request)
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain' }
+                });
+
+                const result = await res.json();
+
+                if (result.status === 'success') {
+                    alert('點餐成功！');
+                    cart = [];
+                    updateCartUI();
+                    if (liff.isInClient()) {
+                        liff.closeWindow();
+                    }
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (err) {
+                alert('點餐失敗: ' + err);
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = `送出訂單 (${cart.length})`;
+            }
+        }
+    </script>
+</body>
+
+</html>
