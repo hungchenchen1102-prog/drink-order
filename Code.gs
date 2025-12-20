@@ -109,7 +109,7 @@ function replyShopSelection(replyToken) {
           "action": {
             "type": "uri",
             "label": "去點餐",
-            "uri": `https://liff.line.me/YOUR_LIFF_ID?shop=${encodeURIComponent(shop)}` // Replace YOUR_LIFF_ID
+            "uri": `https://liff.line.me/2008582471-8eAzmDnL?shop=${encodeURIComponent(shop)}` // Replace YOUR_LIFF_ID
           }
         }
       ]
@@ -231,4 +231,5 @@ function getLastOrder(userId) {
   }
   return null;
 }
+
 
