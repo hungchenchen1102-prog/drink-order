@@ -1,6 +1,6 @@
 // CONFIGURATION
-const CHANNEL_ACCESS_TOKEN = 'YOUR_CHANNEL_ACCESS_TOKEN'; // Replace with your token
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID'; // Replace with your Spreadsheet ID
+const CHANNEL_ACCESS_TOKEN = 'Glbvx4cFEDFQaP/G0BtKlHWDDe6oaseqocTmkBbicpwz2Yp+JFYYzBnrcDFeN/6IECig5U220CSWqSfKnqQ+GslbvSB9947hIopdaerFQCm/NJgI9rHvBiG1B3rHdt/QvceVNU1JbzR3nIo0D0az8gdB04t89/1O/w1cDnyilFU='; // Replace with your token
+const SPREADSHEET_ID = '1BV9Wdol2gwJpZsPDcRINcOITxYMuAiz12ptWbtLKwI0'; // Replace with your Spreadsheet ID
 // You can also use PropertiesService for better security if preferred.
 
 function doPost(e) {
@@ -231,3 +231,4 @@ function getLastOrder(userId) {
   }
   return null;
 }
+
