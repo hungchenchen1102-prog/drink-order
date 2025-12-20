@@ -212,7 +212,7 @@
 
     <script>
         // CONFIGURATION: Replace with your Google Apps Script Web App URL
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxldZMjXJMv5BA5y5hCkH-dILvKu5dnw0aFE5W5pGWnOA1Aftx6OSPg7dcSkzQ3mKk_YA/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwT8-B6lMSm0udwiprw6nkaG8D_JbNsgaXISffXlCbg0qSkNlF2CzvG5oXCuEFIdksXqA/exec';
 
         let currentShop = "";
         let currentItem = null;
@@ -220,7 +220,7 @@
 
         window.onload = async function () {
             // Check if API_URL is set
-            if (API_URL === 'https://script.google.com/macros/s/AKfycbxldZMjXJMv5BA5y5hCkH-dILvKu5dnw0aFE5W5pGWnOA1Aftx6OSPg7dcSkzQ3mKk_YA/exec') {
+            if (API_URL === 'https://script.google.com/macros/s/AKfycbwT8-B6lMSm0udwiprw6nkaG8D_JbNsgaXISffXlCbg0qSkNlF2CzvG5oXCuEFIdksXqA/exec') {
                 console.warn('Please update API_URL in index.html');
             }
             await initializeLiff();
@@ -228,14 +228,32 @@
 
         async function initializeLiff() {
             try {
-                const urlParams = new URLSearchParams(window.location.search);
-                currentShop = urlParams.get('shop');
-
-                // Try to Initialize LIFF
+                // Try to Initialize LIFF first
+                let isLiffAvailable = false;
                 try {
-                    await liff.init({ liffId: "YOUR_LIFF_ID" });
+                    await liff.init({ liffId: "2008582471-8eAzmDnL" });
+                    isLiffAvailable = true;
                 } catch (liffErr) {
                     console.log('LIFF init warning:', liffErr);
+                }
+
+                // Get shop parameter from LIFF context or URL
+                if (isLiffAvailable && liff.isInClient()) {
+                    // When opened from LINE, get parameters from LIFF context
+                    const context = liff.getContext();
+                    console.log('LIFF Context:', context);
+
+                    // Try to get shop from query string in LIFF URL
+                    const liffUrl = window.location.href;
+                    const url = new URL(liffUrl);
+                    currentShop = url.searchParams.get('shop');
+
+                    console.log('Shop from LIFF URL:', currentShop);
+                } else {
+                    // Direct browser access or LIFF not available
+                    const urlParams = new URLSearchParams(window.location.search);
+                    currentShop = urlParams.get('shop');
+                    console.log('Shop from URL params:', currentShop);
                 }
 
                 if (currentShop) {
@@ -431,6 +449,5 @@
         }
     </script>
 </body>
-
 
 </html>
