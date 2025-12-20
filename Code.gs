@@ -172,15 +172,16 @@ function getShopList() {
 function getMenu(shopName) {
   const sheet = getSpreadsheet().getSheetByName('Menu');
   const data = sheet.getDataRange().getValues();
-  const menu = []; // { category, name, price }
+  const menu = []; // { item, priceM, priceL }
   
-  // Headers: Shop, Category, Item, Price
+  // Headers: Shop, Item, PriceM, PriceL
+  // Column indexes: 0=Shop, 1=Item, 2=PriceM, 3=PriceL
   for (let i = 1; i < data.length; i++) {
     if (data[i][0] === shopName) {
       menu.push({
-        category: data[i][1],
-        item: data[i][2],
-        price: data[i][3]
+        item: data[i][1],
+        priceM: data[i][2], // M杯價格，如果是 "-" 表示沒有M杯
+        priceL: data[i][3]  // L杯價格，如果是 "-" 表示沒有L杯
       });
     }
   }
@@ -231,5 +232,4 @@ function getLastOrder(userId) {
   }
   return null;
 }
-
 
