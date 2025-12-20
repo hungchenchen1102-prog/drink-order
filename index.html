@@ -192,6 +192,12 @@
                 </select>
             </div>
 
+            <div class="option-group">
+                <label>數量</label>
+                <input type="number" id="quantity-input" value="1" min="1" max="99"
+                    style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+            </div>
+
             <div style="display: flex; gap: 10px;">
                 <button onclick="closeModal()"
                     style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px;">取消</button>
@@ -392,6 +398,9 @@
                 return;
             }
 
+            // 重置數量為 1
+            document.getElementById('quantity-input').value = 1;
+
             document.getElementById('options-modal').style.display = 'block';
         }
 
@@ -404,6 +413,7 @@
             const size = document.getElementById('size-select').value;
             const sugar = document.getElementById('sugar-select').value;
             const ice = document.getElementById('ice-select').value;
+            const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
 
             // 根據選擇的尺寸設定價格
             let price = 0;
@@ -413,13 +423,16 @@
                 price = currentItem.priceL;
             }
 
-            cart.push({
-                name: currentItem.item,
-                size,
-                sugar,
-                ice,
-                price: price
-            });
+            // 根據數量加入購物車（相同配置的多杯飲料）
+            for (let i = 0; i < quantity; i++) {
+                cart.push({
+                    name: currentItem.item,
+                    size,
+                    sugar,
+                    ice,
+                    price: price
+                });
+            }
 
             updateCartUI();
             closeModal();
@@ -431,7 +444,10 @@
                 return sum + (itemPrice || 0);
             }, 0);
             document.getElementById('total-price').innerText = total;
-            document.getElementById('cart-count').innerText = cart.length;
+
+            // 計算總杯數
+            const totalQuantity = cart.length;
+            document.getElementById('cart-count').innerText = totalQuantity;
 
             if (cart.length > 0) {
                 document.getElementById('cart-bar').classList.remove('hidden');
@@ -524,4 +540,3 @@
 </body>
 
 </html>
-
