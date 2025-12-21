@@ -1,767 +1,543 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <base target="_top">
-    <!-- LIFF SDK -->
-    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>點餐系統</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* 調整：更透亮的玻璃變數 */
-            --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.6);
-            --glass-border-highlight: 1px solid rgba(255, 255, 255, 0.9);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
-            
-            --primary-gradient: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
-            --accent-color: #005bea;
-            --text-main: #1a1a2e;
-            --text-secondary: #333355;
-        }
+    <base target="_top">
+    <!-- LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>點餐系統</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
 
-        body {
-            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            background: linear-gradient(45deg, #FF9A9E, #FECFEF, #a18cd1, #fbc2eb);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: var(--text-main);
-            box-sizing: border-box;
-            padding-bottom: 120px;
-        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        h2 {
+            color: #333;
+            text-align: center;
+        }
 
-        .blobs {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(50px);
-            opacity: 0.8;
-        }
-        .blob-1 { width: 350px; height: 350px; background: #84fab0; top: -100px; left: -50px; animation: float 6s ease-in-out infinite; mix-blend-mode: overlay; }
-        .blob-2 { width: 300px; height: 300px; background: #8fd3f4; bottom: 10%; right: -50px; animation: float 8s ease-in-out infinite reverse; mix-blend-mode: overlay; }
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-30px); }
-        }
+        .menu-item:last-child {
+            border-bottom: none;
+        }
 
-        h2, h3 {
-            color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
-            text-align: center;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 25px;
-        }
+        .item-info {
+            flex: 1;
+        }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 25px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border-radius: 24px;
-            border-top: 1px solid rgba(255, 255, 255, 0.8);
-            border-left: 1px solid rgba(255, 255, 255, 0.8);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-            border-right: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-        }
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
 
-        .menu-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
-            margin-bottom: 16px;
-            padding: 16px;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-top: 1px solid rgba(255, 255, 255, 0.7);
-            border-left: 1px solid rgba(255, 255, 255, 0.7);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-        }
+        .item-price {
+            color: #e54d42;
+            font-weight: bold;
+        }
 
-        .menu-item:active {
-            transform: scale(0.98);
-            background: rgba(255, 255, 255, 0.6);
-        }
+        .add-btn {
+            background: #00B900;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
 
-        .menu-item:last-child {
-            margin-bottom: 0;
-        }
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
 
-        .item-info {
-            flex: 1;
-        }
+        .modal-content {
+            background: white;
+            margin: 20% auto;
+            padding: 20px;
+            width: 85%;
+            border-radius: 12px;
+        }
 
-        .item-name {
-            font-weight: 700;
-            font-size: 1.15em;
-            color: var(--text-main);
-            margin-bottom: 4px;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
-        }
+        .modal h3 {
+            margin-top: 0;
+        }
 
-        .item-price {
-            color: #d63384;
-            font-weight: 600;
-            font-size: 0.95em;
-            background: rgba(255,255,255,0.6);
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 10px;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
-        }
+        .option-group {
+            margin-bottom: 15px;
+        }
 
-        .add-btn {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 
-                0 4px 15px rgba(0, 198, 251, 0.4),
-                inset 0 2px 5px rgba(255,255,255,0.5),
-                inset 0 -2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
+        .option-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #666;
+        }
 
-        .add-btn:hover {
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 198, 251, 0.6), inset 0 0 10px rgba(255,255,255,0.8);
-        }
+        select,
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
 
-        /* Modal 修復與優化 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* 加深背景，減少干擾 */
-            z-index: 1000; /* 提高層級，確保在最上層 */
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            
-            /* 關鍵修復：允許捲動與 Flex 置中 */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            align-items: center; /* 垂直置中 */
-            justify-content: center; /* 水平置中 */
-            padding: 20px 0; /* 預留上下緩衝空間 */
-        }
+        .cart-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
 
-        .modal.show {
-            opacity: 1;
-        }
+        .cart-total {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
 
-        .modal-content {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
-            /* 移除內層過重的 backdrop-filter 以避免手機版點擊失效 */
-            /* backdrop-filter: blur(40px); */ 
-            margin: auto; /* 配合 Flexbox 置中 */
-            padding: 30px;
-            width: 85%;
-            max-width: 400px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.9);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
-            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative; /* 確保內容層級正確 */
-        }
+        .submit-btn {
+            background: #00B900;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
 
-        @keyframes modalPop {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        .hidden {
+            display: none;
+        }
 
-        .modal h3 {
-            color: var(--text-main);
-            margin-top: 0;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
-            padding-bottom: 15px;
-            text-align: left;
-            font-size: 1.5em;
-        }
-
-        .option-group {
-            margin-bottom: 20px;
-        }
-
-        .option-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            font-size: 0.9em;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        select, input {
-            width: 100%;
-            padding: 14px;
-            background: rgba(255, 255, 255, 0.6); /* 稍微不透明一點 */
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 16px;
-            font-size: 16px; /* 16px 防止 iOS 自動縮放 */
-            font-weight: 500;
-            color: var(--text-main);
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-            box-sizing: border-box;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        
-        .select-wrapper {
-            position: relative;
-        }
-        .select-wrapper::after {
-            content: '▼';
-            font-size: 0.8em;
-            color: var(--accent-color);
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        select:focus, input:focus {
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 0 0 4px rgba(0, 91, 234, 0.15);
-            border-color: var(--accent-color);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            /* 確保按鈕有足夠空間點擊 */
-            padding-bottom: 10px; 
-        }
-
-        .btn-cancel {
-            flex: 1;
-            padding: 14px;
-            border: 1px solid rgba(160, 160, 160, 0.3);
-            background: rgba(255, 255, 255, 0.5);
-            color: var(--text-secondary);
-            border-radius: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-confirm {
-            flex: 1;
-            padding: 14px;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 91, 234, 0.3);
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-confirm:active {
-            transform: scale(0.96);
-        }
-
-        .cart-bar {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 50px);
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.85); /* 提高不透明度 */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 15px 20px;
-            border-radius: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            z-index: 900; /* 確保在 Modal 之下但在內容之上 */
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .cart-bar.hidden {
-            transform: translateX(-50%) translateY(200%);
-            display: flex;
-        }
-
-        .cart-total {
-            font-weight: 700;
-            font-size: 1.1em;
-            color: var(--text-main);
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        
-        .cart-total span {
-            color: #d63384;
-            font-size: 1.3em;
-        }
-
-        .submit-btn {
-            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            color: #0d5f41;
-            border: none;
-            padding: 16px;
-            border-radius: 18px;
-            font-size: 1.1em;
-            font-weight: 700;
-            width: 100%;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(56, 249, 215, 0.3);
-        }
-
-        #menu-list button.submit-btn {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            color: var(--text-main);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        #loading {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-weight: 700;
-            font-size: 1.2em;
-            background: rgba(0,0,0,0.5);
-            padding: 20px 40px;
-            border-radius: 40px;
-            z-index: 2000;
-        }
-    </style>
+        #loading {
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- 背景裝飾 -->
-    <div class="blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </div>
+    <div id="loading">載入中...</div>
 
-    <div id="loading">
-        載入中...
-    </div>
+    <div id="app" class="container hidden">
+        <h2 id="shop-title">飲料店</h2>
+        <div id="menu-list"></div>
+    </div>
 
-    <div id="app" class="container hidden">
-        <h2 id="shop-title">飲料店</h2>
-        <div id="menu-list"></div>
-    </div>
+    <!-- Options Modal -->
+    <div id="options-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-item-name"></h3>
 
-    <!-- Options Modal -->
-    <div id="options-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-item-name"></h3>
+            <div class="option-group">
+                <label>尺寸</label>
+                <select id="size-select">
+                    <option value="M">中杯 (M)</option>
+                    <option value="L">大杯 (L)</option>
+                </select>
+            </div>
 
-            <div class="option-group">
-                <label>尺寸</label>
-                <div class="select-wrapper">
-                    <select id="size-select"></select>
-                </div>
-            </div>
+            <div class="option-group">
+                <label>甜度</label>
+                <select id="sugar-select">
+                    <option value="正常糖">正常糖</option>
+                    <option value="少糖">少糖</option>
+                    <option value="半糖">半糖</option>
+                    <option value="微糖">微糖</option>
+                    <option value="無糖">無糖</option>
+                </select>
+            </div>
 
-            <div class="option-group">
-                <label>甜度</label>
-                <div class="select-wrapper">
-                    <select id="sugar-select">
-                        <option value="正常糖">正常糖</option>
-                        <option value="少糖">少糖</option>
-                        <option value="半糖">半糖</option>
-                        <option value="微糖">微糖</option>
-                        <option value="無糖">無糖</option>
-                    </select>
-                </div>
-            </div>
+            <div class="option-group">
+                <label>冰塊</label>
+                <select id="ice-select">
+                    <option value="正常冰">正常冰</option>
+                    <option value="少冰">少冰</option>
+                    <option value="微冰">微冰</option>
+                    <option value="去冰">去冰</option>
+                    <option value="熱">熱</option>
+                </select>
+            </div>
 
-            <div class="option-group">
-                <label>冰塊</label>
-                <div class="select-wrapper">
-                    <select id="ice-select">
-                        <option value="正常冰">正常冰</option>
-                        <option value="少冰">少冰</option>
-                        <option value="微冰">微冰</option>
-                        <option value="去冰">去冰</option>
-                        <option value="熱">熱</option>
-                    </select>
-                </div>
-            </div>
+            <div class="option-group">
+                <label>數量</label>
+                <input type="number" id="quantity-input" value="1" min="1" max="99"
+                    style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+            </div>
 
-            <div class="option-group">
-                <label>數量</label>
-                <input type="number" id="quantity-input" value="1" min="1" max="99">
-            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="closeModal()"
+                    style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px;">取消</button>
+                <button onclick="confirmItem()"
+                    style="flex: 1; padding: 10px; background-color: #00B900; color: white; border: none; border-radius: 4px;">加入購物車</button>
+            </div>
+        </div>
+    </div>
 
-            <div class="modal-actions">
-                <button type="button" onclick="closeModal()" class="btn-cancel">取消</button>
-                <button type="button" onclick="confirmItem()" class="btn-confirm">加入購物車</button>
-            </div>
-        </div>
-    </div>
+    <!-- Cart Bar -->
+    <div id="cart-bar" class="cart-bar hidden">
+        <div style="width: 100%">
+            <div class="cart-total">總計: $<span id="total-price">0</span></div>
+            <button onclick="submitOrder()" class="submit-btn" id="submit-btn">送出訂單 (<span
+                    id="cart-count">0</span>)</button>
+        </div>
+    </div>
 
-    <!-- Cart Bar -->
-    <div id="cart-bar" class="cart-bar hidden">
-        <div class="cart-total">總計: $<span id="total-price">0</span></div>
-        <button type="button" onclick="submitOrder()" class="submit-btn" id="submit-btn">
-            送出訂單 (<span id="cart-count">0</span>)
-        </button>
-    </div>
+    <script>
+        // CONFIGURATION: Replace with your Google Apps Script Web App URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwqFl5mfTTi1kRCffudjhzWZZpUZDWcxBx7EcZrJ6PBJJHZTQ8oyIK_Jl26RUMIhtHhbA/exec';
 
-    <script>
-        // CONFIGURATION: Replace with your Google Apps Script Web App URL
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwqFl5mfTTi1kRCffudjhzWZZpUZDWcxBx7EcZrJ6PBJJHZTQ8oyIK_Jl26RUMIhtHhbA/exec';
+        let currentShop = "";
+        let currentItem = null;
+        let cart = [];
 
-        let currentShop = "";
-        let currentItem = null;
-        let cart = [];
+        window.onload = async function () {
+            // Check if API_URL is set
+            if (API_URL === 'https://script.google.com/macros/s/AKfycbwqFl5mfTTi1kRCffudjhzWZZpUZDWcxBx7EcZrJ6PBJJHZTQ8oyIK_Jl26RUMIhtHhbA/exec') {
+                console.warn('Please update API_URL in index.html');
+            }
+            await initializeLiff();
+        };
 
-        window.onload = async function () {
-            if (API_URL === 'YOUR_GAS_WEB_APP_URL') {
-                console.warn('Please update API_URL in index.html');
-            }
-            await initializeLiff();
-        };
+        async function initializeLiff() {
+            try {
+                // Try to Initialize LIFF first
+                let isLiffAvailable = false;
+                try {
+                    await liff.init({ liffId: "2008582471-8eAzmDnL" });
+                    isLiffAvailable = true;
+                } catch (liffErr) {
+                    console.log('LIFF init warning:', liffErr);
+                }
 
-        async function initializeLiff() {
-            try {
-                let isLiffAvailable = false;
-                try {
-                    await liff.init({ liffId: "2006764515-B15nDrqX" });
-                    isLiffAvailable = true;
-                } catch (liffErr) {
-                    console.log('LIFF init warning:', liffErr);
-                }
+                // Get shop parameter from LIFF context or URL
+                if (isLiffAvailable && liff.isInClient()) {
+                    // When opened from LINE, get parameters from LIFF context
+                    const context = liff.getContext();
+                    console.log('LIFF Context:', context);
 
-                if (isLiffAvailable && liff.isInClient()) {
-                    const context = liff.getContext();
-                    const liffUrl = window.location.href;
-                    const url = new URL(liffUrl);
-                    currentShop = url.searchParams.get('shop');
-                } else {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    currentShop = urlParams.get('shop');
-                }
+                    // Try to get shop from query string in LIFF URL
+                    const liffUrl = window.location.href;
+                    const url = new URL(liffUrl);
+                    currentShop = url.searchParams.get('shop');
 
-                if (currentShop) {
-                    document.getElementById('shop-title').innerText = currentShop;
-                    loadMenu(currentShop);
-                } else {
-                    document.getElementById('shop-title').innerText = '請選擇店家';
-                    loadShopList();
-                }
+                    console.log('Shop from LIFF URL:', currentShop);
+                } else {
+                    // Direct browser access or LIFF not available
+                    const urlParams = new URLSearchParams(window.location.search);
+                    currentShop = urlParams.get('shop');
+                    console.log('Shop from URL params:', currentShop);
+                }
 
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('app').classList.remove('hidden');
+                if (currentShop) {
+                    document.getElementById('shop-title').innerText = currentShop;
+                    loadMenu(currentShop);
+                } else {
+                    document.getElementById('shop-title').innerText = '請選擇店家';
+                    loadShopList();
+                }
 
-            } catch (err) {
-                console.error(err);
-                alert('初始化錯誤: ' + err);
-            }
-        }
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
 
-        async function loadShopList() {
-            try {
-                const res = await fetch(`${API_URL}?action=getShopList`);
-                if (!res.ok) throw new Error('Network response was not ok');
-                const shops = await res.json();
-                renderShopSelection(shops);
-            } catch (err) {
-                console.error(err);
-                alert('無法讀取店家列表。請確認:\n1. GAS 已部署為 Web App (Anyone)\n2. API_URL 設定正確');
-            }
-        }
+            } catch (err) {
+                console.error(err);
+                alert('初始化錯誤: ' + err);
+            }
+        }
 
-        async function loadMenu(shop) {
-            document.getElementById('loading').classList.remove('hidden');
-            try {
-                const res = await fetch(`${API_URL}?action=getMenu&shop=${encodeURIComponent(shop)}`);
-                if (!res.ok) throw new Error('Network response was not ok');
-                const menuItems = await res.json();
-                renderMenu(menuItems);
-            } catch (err) {
-                alert("讀取菜單失敗: " + err);
-                document.getElementById('loading').classList.add('hidden');
-            }
-        }
+        async function loadShopList() {
+            try {
+                const res = await fetch(`${API_URL}?action=getShopList`);
+                if (!res.ok) throw new Error('Network response was not ok');
+                const shops = await res.json();
+                renderShopSelection(shops);
+            } catch (err) {
+                console.error(err);
+                alert('無法讀取店家列表。請確認:\n1. GAS 已部署為 Web App (Anyone)\n2. API_URL 設定正確');
+            }
+        }
 
-        function renderShopSelection(shops) {
-            const list = document.getElementById('menu-list');
-            list.innerHTML = '';
+        async function loadMenu(shop) {
+            document.getElementById('loading').classList.remove('hidden');
+            try {
+                const res = await fetch(`${API_URL}?action=getMenu&shop=${encodeURIComponent(shop)}`);
+                if (!res.ok) throw new Error('Network response was not ok');
+                const menuItems = await res.json();
+                renderMenu(menuItems);
+            } catch (err) {
+                alert("讀取菜單失敗: " + err);
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
 
-            if (!shops || shops.length === 0) {
-                list.innerHTML = '<p style="text-align: center; color:white;">找不到任何店家，請檢查 API 回傳。</p>';
-                return;
-            }
+        function renderShopSelection(shops) {
+            const list = document.getElementById('menu-list');
+            list.innerHTML = '';
 
-            shops.forEach(shop => {
-                const btn = document.createElement('button');
-                btn.className = 'submit-btn';
-                btn.innerText = shop;
-                btn.onclick = function () {
-                    currentShop = shop;
-                    document.getElementById('shop-title').innerText = currentShop;
-                    loadMenu(currentShop);
-                };
-                list.appendChild(btn);
-            });
-        }
+            if (!shops || shops.length === 0) {
+                list.innerHTML = '<p style="text-align: center;">找不到任何店家，請檢查 API 回傳。</p>';
+                return;
+            }
 
-        function renderMenu(menuItems) {
-            document.getElementById('loading').classList.add('hidden');
-            const list = document.getElementById('menu-list');
-            list.innerHTML = '';
+            shops.forEach(shop => {
+                const btn = document.createElement('button');
+                btn.className = 'submit-btn';
+                btn.style.marginBottom = '10px';
+                btn.style.backgroundColor = '#00B900';
+                btn.innerText = shop;
+                btn.onclick = function () {
+                    currentShop = shop;
+                    document.getElementById('shop-title').innerText = currentShop;
+                    loadMenu(currentShop);
+                };
+                list.appendChild(btn);
+            });
+        }
 
-            if (!menuItems || menuItems.length === 0) {
-                list.innerHTML = `<p style="text-align: center; color: white;">"${currentShop}" 暫無菜單</p>`;
-                return;
-            }
+        function renderMenu(menuItems) {
+            document.getElementById('loading').classList.add('hidden');
+            const list = document.getElementById('menu-list');
+            list.innerHTML = '';
 
-            menuItems.forEach(item => {
-                const el = document.createElement('div');
-                el.className = 'menu-item';
+            if (!menuItems || menuItems.length === 0) {
+                list.innerHTML = `<p style="text-align: center; color: #888;">"${currentShop}" 暫無菜單</p>`;
+                return;
+            }
 
-                let priceDisplay = '';
-                const hasM = item.priceM && item.priceM !== '-';
-                const hasL = item.priceL && item.priceL !== '-';
+            menuItems.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'menu-item';
 
-                if (hasM && hasL) {
-                    priceDisplay = `$${item.priceM} - $${item.priceL}`;
-                } else if (hasM) {
-                    priceDisplay = `$${item.priceM} (僅M杯)`;
-                } else if (hasL) {
-                    priceDisplay = `$${item.priceL} (僅L杯)`;
-                } else {
-                    priceDisplay = '價格未設定';
-                }
+                // 計算價格顯示
+                let priceDisplay = '';
+                const hasM = item.priceM && item.priceM !== '-';
+                const hasL = item.priceL && item.priceL !== '-';
 
-                el.innerHTML = `
-                    <div class="item-info">
-                        <div class="item-name">${item.item}</div>
-                        <div class="item-price">${priceDisplay}</div>
-                    </div>
-                    <button class="add-btn" onclick='openModal(${JSON.stringify(item)})'>+</button>
-                `;
-                list.appendChild(el);
-            });
-        }
+                if (hasM && hasL) {
+                    priceDisplay = `$${item.priceM} - $${item.priceL}`;
+                } else if (hasM) {
+                    priceDisplay = `$${item.priceM} (僅M杯)`;
+                } else if (hasL) {
+                    priceDisplay = `$${item.priceL} (僅L杯)`;
+                } else {
+                    priceDisplay = '價格未設定';
+                }
 
-        function openModal(item) {
-            currentItem = item;
-            document.getElementById('modal-item-name').innerText = item.item;
+                el.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.item}</div>
+                        <div class="item-price">${priceDisplay}</div>
+                    </div>
+                    <button class="add-btn" onclick='openModal(${JSON.stringify(item)})'>+</button>
+                `;
+                list.appendChild(el);
+            });
+        }
 
-            const sizeSelect = document.getElementById('size-select');
-            sizeSelect.innerHTML = '';
+        function openModal(item) {
+            currentItem = item;
+            document.getElementById('modal-item-name').innerText = item.item;
 
-            const hasM = item.priceM && item.priceM !== '-';
-            const hasL = item.priceL && item.priceL !== '-';
+            // 動態生成尺寸選項
+            const sizeSelect = document.getElementById('size-select');
+            sizeSelect.innerHTML = '';
 
-            if (hasM) {
-                const optionM = document.createElement('option');
-                optionM.value = 'M';
-                optionM.textContent = `中杯 (M) - $${item.priceM}`;
-                sizeSelect.appendChild(optionM);
-            }
+            const hasM = item.priceM && item.priceM !== '-';
+            const hasL = item.priceL && item.priceL !== '-';
 
-            if (hasL) {
-                const optionL = document.createElement('option');
-                optionL.value = 'L';
-                optionL.textContent = `大杯 (L) - $${item.priceL}`;
-                sizeSelect.appendChild(optionL);
-            }
+            if (hasM) {
+                const optionM = document.createElement('option');
+                optionM.value = 'M';
+                optionM.textContent = `中杯 (M) - $${item.priceM}`;
+                sizeSelect.appendChild(optionM);
+            }
 
-            if (!hasM && !hasL) {
-                alert('此品項暫無可用尺寸');
-                return;
-            }
+            if (hasL) {
+                const optionL = document.createElement('option');
+                optionL.value = 'L';
+                optionL.textContent = `大杯 (L) - $${item.priceL}`;
+                sizeSelect.appendChild(optionL);
+            }
 
-            document.getElementById('quantity-input').value = 1;
+            if (!hasM && !hasL) {
+                alert('此品項暫無可用尺寸');
+                return;
+            }
 
-            const modal = document.getElementById('options-modal');
-            // 改為 Flex 佈局以置中
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('show'), 10);
-        }
+            // 重置數量為 1
+            document.getElementById('quantity-input').value = 1;
 
-        function closeModal() {
-            const modal = document.getElementById('options-modal');
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-                currentItem = null;
-            }, 300);
-        }
+            document.getElementById('options-modal').style.display = 'block';
+        }
 
-        function confirmItem() {
-            if (!currentItem) return;
+        function closeModal() {
+            document.getElementById('options-modal').style.display = 'none';
+            currentItem = null;
+        }
 
-            const size = document.getElementById('size-select').value;
-            const sugar = document.getElementById('sugar-select').value;
-            const ice = document.getElementById('ice-select').value;
-            const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
+        function confirmItem() {
+            const size = document.getElementById('size-select').value;
+            const sugar = document.getElementById('sugar-select').value;
+            const ice = document.getElementById('ice-select').value;
+            const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
 
-            let price = 0;
-            if (size === 'M') {
-                price = currentItem.priceM;
-            } else if (size === 'L') {
-                price = currentItem.priceL;
-            }
+            // 根據選擇的尺寸設定價格
+            let price = 0;
+            if (size === 'M') {
+                price = currentItem.priceM;
+            } else if (size === 'L') {
+                price = currentItem.priceL;
+            }
 
-            for (let i = 0; i < quantity; i++) {
-                cart.push({
-                    name: currentItem.item,
-                    size,
-                    sugar,
-                    ice,
-                    price: price
-                });
-            }
+            // 根據數量加入購物車（相同配置的多杯飲料）
+            for (let i = 0; i < quantity; i++) {
+                cart.push({
+                    name: currentItem.item,
+                    size,
+                    sugar,
+                    ice,
+                    price: price
+                });
+            }
 
-            updateCartUI();
-            closeModal();
-        }
+            updateCartUI();
+            closeModal();
+        }
 
-        function updateCartUI() {
-            const total = cart.reduce((sum, item) => {
-                const itemPrice = typeof item.price === 'string' ? parseInt(item.price) : item.price;
-                return sum + (itemPrice || 0);
-            }, 0);
-            document.getElementById('total-price').innerText = total;
+        function updateCartUI() {
+            const total = cart.reduce((sum, item) => {
+                const itemPrice = typeof item.price === 'string' ? parseInt(item.price) : item.price;
+                return sum + (itemPrice || 0);
+            }, 0);
+            document.getElementById('total-price').innerText = total;
 
-            const totalQuantity = cart.length;
-            document.getElementById('cart-count').innerText = totalQuantity;
-            
-            const cartBar = document.getElementById('cart-bar');
-            if (cart.length > 0) {
-                cartBar.classList.remove('hidden');
-            } else {
-                cartBar.classList.add('hidden');
-            }
-        }
+            // 計算總杯數
+            const totalQuantity = cart.length;
+            document.getElementById('cart-count').innerText = totalQuantity;
 
-        function getUserId() {
-            let localUserId = localStorage.getItem('drinkOrderUserId');
-            if (!localUserId) {
-                localUserId = 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('drinkOrderUserId', localUserId);
-            }
-            return localUserId;
-        }
+            if (cart.length > 0) {
+                document.getElementById('cart-bar').classList.remove('hidden');
+            } else {
+                document.getElementById('cart-bar').classList.add('hidden');
+            }
+        }
 
-        function submitOrder() {
-            if (cart.length === 0) return;
+        function getUserId() {
+            // 檢查 localStorage 中是否已有 userId
+            let localUserId = localStorage.getItem('drinkOrderUserId');
+            if (!localUserId) {
+                // 產生新的唯一 ID (使用時間戳記 + 隨機數)
+                localUserId = 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('drinkOrderUserId', localUserId);
+            }
+            return localUserId;
+        }
 
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.innerText = '處理中...';
+        function submitOrder() {
+            if (cart.length === 0) return;
 
-            if (liff.isInClient() && liff.isLoggedIn()) {
-                liff.getProfile().then(profile => {
-                    sendOrderToBackend(profile.userId, profile.displayName);
-                }).catch(err => {
-                    console.warn('Profile fetch failed:', err);
-                    const fallbackId = getUserId();
-                    sendOrderToBackend(fallbackId, 'LINE User (Error)');
-                });
-            } else {
-                const webUserId = getUserId();
-                sendOrderToBackend(webUserId, 'Web User');
-            }
-        }
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerText = '處理中...';
 
-        async function sendOrderToBackend(userId, userName) {
-            const btn = document.getElementById('submit-btn');
-            const orderData = {
-                userId: userId,
-                userName: userName,
-                shop: currentShop,
-                items: cart
-            };
+            if (liff.isInClient() && liff.isLoggedIn()) {
+                // LIFF 環境：使用真實的 LINE 使用者資訊
+                liff.getProfile().then(profile => {
+                    sendOrderToBackend(profile.userId, profile.displayName);
+                }).catch(err => {
+                    console.warn('Profile fetch failed:', err);
+                    // 如果失敗，使用 localStorage 的 ID
+                    const fallbackId = getUserId();
+                    sendOrderToBackend(fallbackId, 'LINE User (Error)');
+                });
+            } else {
+                // 電腦瀏覽器：使用 localStorage 持久化的 ID
+                const webUserId = getUserId();
+                sendOrderToBackend(webUserId, 'Web User');
+            }
+        }
 
-            const payload = {
-                action: 'saveOrder',
-                data: orderData
-            };
+        async function sendOrderToBackend(userId, userName) {
+            const btn = document.getElementById('submit-btn');
+            const orderData = {
+                userId: userId,
+                userName: userName,
+                shop: currentShop,
+                items: cart
+            };
 
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'text/plain' }
-                });
+            const payload = {
+                action: 'saveOrder',
+                data: orderData
+            };
 
-                const result = await res.json();
+            try {
+                // Use text/plain to avoid CORS preflight (Simple Request)
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'text/plain' }
+                });
 
-                if (result.status === 'success') {
-                    alert('點餐成功！');
-                    cart = [];
-                    updateCartUI();
-                    if (liff.isInClient()) {
-                        liff.closeWindow();
-                    }
-                } else {
-                    throw new Error(result.message || 'Unknown error');
-                }
-            } catch (err) {
-                alert('點餐失敗: ' + err);
-                console.error(err);
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = `送出訂單 (${cart.length})`;
-                }
-            }
-        }
-    </script>
+                const result = await res.json();
+
+                if (result.status === 'success') {
+                    alert('點餐成功！');
+                    cart = [];
+                    updateCartUI();
+                    if (liff.isInClient()) {
+                        liff.closeWindow();
+                    }
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (err) {
+                alert('點餐失敗: ' + err);
+                console.error(err);
+            } finally {
+                // 檢查按鈕是否還存在（可能在 LIFF 關閉後已被移除）
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = `送出訂單 (${cart.length})`;
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>
