@@ -5,7 +5,7 @@
     <base target="_top">
     <!-- LIFF SDK -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>點餐系統</title>
     <!-- Google Fonts for better typography -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -29,6 +29,8 @@
             color: var(--text-color);
             position: relative;
             overflow-x: hidden;
+            /* Prevent bounce effect on iOS */
+            overscroll-behavior-y: none;
         }
 
         /* Ambient Background Blobs */
@@ -65,7 +67,7 @@
 
         .container {
             max-width: 600px;
-            margin: 0 auto 80px auto; /* Added bottom margin for cart bar */
+            margin: 0 auto 100px auto; /* Increased bottom margin for cart bar */
             /* Glassmorphism Effect */
             background: rgba(255, 255, 255, 0.35);
             box-shadow: var(--glass-shadow);
@@ -74,6 +76,8 @@
             border-radius: 20px;
             border: 1px solid var(--glass-border);
             padding: 25px;
+            position: relative;
+            z-index: 1;
         }
 
         h2 {
@@ -97,6 +101,8 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            /* Improve touch response */
+            touch-action: manipulation;
         }
 
         .menu-item:hover {
@@ -126,8 +132,8 @@
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             color: #0f5132;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 44px; /* Slightly larger for touch */
+            height: 44px;
             border-radius: 50%;
             font-size: 24px;
             line-height: 1;
@@ -138,13 +144,14 @@
             align-items: center;
             justify-content: center;
             padding-bottom: 4px; /* visually align + */
+            flex-shrink: 0; /* Prevent shrinking */
         }
 
         .add-btn:active {
             transform: scale(0.9);
         }
 
-        /* Modal styling */
+        /* Modal styling - FIXED FOR MOBILE */
         .modal {
             display: none;
             position: fixed;
@@ -152,10 +159,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.2); /* Lighter dim */
-            backdrop-filter: blur(5px); /* Blur the background content */
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.4); /* Darker dim for better contrast */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1000; /* High Z-Index */
             animation: fadeIn 0.3s;
+            
+            /* Critical fix for mobile scrolling */
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
         }
 
         @keyframes fadeIn {
@@ -164,15 +176,19 @@
         }
 
         .modal-content {
-            background: rgba(255, 255, 255, 0.9);
-            margin: 15vh auto;
+            background: rgba(255, 255, 255, 0.95); /* More opaque */
+            /* Use percentage margin for better mobile adaptability */
+            margin: 10% auto;
+            /* Add bottom margin so it doesn't get cut off */
+            margin-bottom: 50px;
             padding: 30px;
             width: 85%;
             max-width: 400px;
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.8);
             animation: slideUp 0.3s;
+            position: relative;
         }
 
         @keyframes slideUp {
@@ -205,8 +221,8 @@
         select, input {
             width: 100%;
             padding: 12px;
-            background: rgba(240, 240, 240, 0.6);
-            border: 1px solid rgba(255,255,255,0.5);
+            background: rgba(240, 240, 240, 0.8); /* Less transparent for input visibility */
+            border: 1px solid rgba(0,0,0,0.1);
             border-radius: 12px;
             box-sizing: border-box;
             font-size: 16px; /* Prevents zoom on iOS */
@@ -227,58 +243,71 @@
         select:focus, input:focus {
             background: white;
             box-shadow: 0 0 0 3px rgba(0, 185, 0, 0.2);
+            border-color: var(--primary-color);
         }
 
         /* Modal Buttons */
         .modal-btn-group {
             display: flex;
             gap: 15px;
-            margin-top: 25px;
+            margin-top: 30px;
         }
 
         .btn-cancel {
             flex: 1;
-            padding: 12px;
+            padding: 14px; /* Larger touch target */
             background: transparent;
             border: 1px solid #ddd;
             border-radius: 12px;
             color: #666;
             font-weight: 600;
+            font-size: 16px;
             cursor: pointer;
+            touch-action: manipulation;
         }
 
         .btn-confirm {
             flex: 1;
-            padding: 12px;
+            padding: 14px; /* Larger touch target */
             background: var(--primary-color);
             color: white;
             border: none;
             border-radius: 12px;
             font-weight: 600;
+            font-size: 16px;
             box-shadow: 0 4px 12px rgba(0, 185, 0, 0.3);
             cursor: pointer;
+            touch-action: manipulation; /* Prevents double-tap zoom delay */
+        }
+        
+        .btn-confirm:active {
+            transform: scale(0.98);
         }
 
         /* Cart Bar - Glassmorphism */
         .cart-bar {
             position: fixed;
-            bottom: 20px;
+            bottom: 20px; /* Safe area from bottom */
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             max-width: 560px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.9); /* Higher opacity for readability */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 15px 20px;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
-            border: 1px solid rgba(255,255,255,0.6);
-            z-index: 90;
+            border: 1px solid rgba(255,255,255,0.8);
+            z-index: 900;
+            
+            /* Ensure it sits above standard content but below modal */
+            padding-bottom: max(15px, env(safe-area-inset-bottom)); /* iOS Home bar safe area */
+            margin-bottom: env(safe-area-inset-bottom);
         }
 
         .cart-total {
@@ -298,26 +327,31 @@
             box-shadow: 0 4px 15px rgba(0, 185, 0, 0.3);
             cursor: pointer;
             transition: 0.3s;
-            width: auto; /* Allow auto width inside cart bar */
+            width: auto;
+            touch-action: manipulation;
         }
         
         .submit-btn:disabled {
             background: #ccc;
             box-shadow: none;
         }
+        
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
 
         /* Shop Selection Buttons */
         #menu-list .submit-btn {
             width: 100%;
             margin-bottom: 15px !important;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
             color: #333;
             border: 1px solid rgba(255,255,255,0.6);
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         
         #menu-list .submit-btn:hover {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             transform: translateY(-2px);
         }
 
@@ -600,16 +634,27 @@
 
             // 重置數量為 1
             document.getElementById('quantity-input').value = 1;
+            
+            // Prevent body scrolling when modal is open (optional but good for UX)
+            document.body.style.overflow = 'hidden';
 
             document.getElementById('options-modal').style.display = 'block';
         }
 
         function closeModal() {
             document.getElementById('options-modal').style.display = 'none';
+            // Restore body scrolling
+            document.body.style.overflow = '';
             currentItem = null;
         }
 
         function confirmItem() {
+            // Safety check
+            if (!currentItem) {
+                closeModal();
+                return;
+            }
+
             const size = document.getElementById('size-select').value;
             const sugar = document.getElementById('sugar-select').value;
             const ice = document.getElementById('ice-select').value;
