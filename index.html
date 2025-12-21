@@ -20,7 +20,7 @@
             --primary-gradient: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
             --accent-color: #005bea;
             --text-main: #1a1a2e;
-            --text-secondary: #333355; /* 加深次要文字顏色以對抗透明背景 */
+            --text-secondary: #333355;
         }
 
         body {
@@ -28,23 +28,20 @@
             margin: 0;
             padding: 20px;
             min-height: 100vh;
-            /* 背景顏色加深一點，讓前面的白色玻璃更明顯 */
             background: linear-gradient(45deg, #FF9A9E, #FECFEF, #a18cd1, #fbc2eb);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             color: var(--text-main);
             box-sizing: border-box;
-            padding-bottom: 120px; /* 增加底部空間 */
+            padding-bottom: 120px;
         }
 
-        /* 背景動畫 */
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* 裝飾用的漂浮圓形 (色彩更鮮豔，對比更強) */
         .blobs {
             position: fixed;
             top: 0;
@@ -71,7 +68,7 @@
 
         h2, h3 {
             color: #fff;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.15); /* 增加陰影 */
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
             text-align: center;
             font-weight: 700;
             letter-spacing: 1px;
@@ -82,40 +79,29 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 25px;
-            
-            /* 極致玻璃效果 */
             background: var(--glass-bg);
-            backdrop-filter: blur(25px); /* 增加模糊度 */
+            backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border-radius: 24px;
-            
-            /* 邊框光影：上方和左方更亮，模擬光源 */
             border-top: 1px solid rgba(255, 255, 255, 0.8);
             border-left: 1px solid rgba(255, 255, 255, 0.8);
             border-bottom: 1px solid rgba(255, 255, 255, 0.4);
             border-right: 1px solid rgba(255, 255, 255, 0.4);
-            
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
         }
 
-        /* 菜單項目卡片化 - 懸浮玻璃條 */
         .menu-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            
-            /* 讓每個項目也是一塊小玻璃 */
             background: linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 100%);
             margin-bottom: 16px;
             padding: 16px;
             border-radius: 18px;
-            
-            /* 邊框光影 */
             border: 1px solid rgba(255, 255, 255, 0.4);
             border-top: 1px solid rgba(255, 255, 255, 0.7);
             border-left: 1px solid rgba(255, 255, 255, 0.7);
-            
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); /* 輕微陰影 */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
             transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
         }
 
@@ -137,21 +123,20 @@
             font-size: 1.15em;
             color: var(--text-main);
             margin-bottom: 4px;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.5); /* 文字凸起感 */
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
         }
 
         .item-price {
-            color: #d63384; /* 更鮮豔的價格顏色 */
+            color: #d63384;
             font-weight: 600;
             font-size: 0.95em;
             background: rgba(255,255,255,0.6);
             display: inline-block;
             padding: 4px 10px;
             border-radius: 10px;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05); /* 內凹效果 */
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
         }
 
-        /* 液態按鈕 - 寶石感 */
         .add-btn {
             background: var(--primary-gradient);
             color: white;
@@ -164,13 +149,10 @@
             justify-content: center;
             font-size: 24px;
             cursor: pointer;
-            
-            /* 寶石光澤 */
             box-shadow: 
                 0 4px 15px rgba(0, 198, 251, 0.4),
-                inset 0 2px 5px rgba(255,255,255,0.5), /* 頂部反光 */
-                inset 0 -2px 5px rgba(0,0,0,0.1); /* 底部陰影 */
-                
+                inset 0 2px 5px rgba(255,255,255,0.5),
+                inset 0 -2px 5px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
@@ -180,7 +162,7 @@
             box-shadow: 0 6px 20px rgba(0, 198, 251, 0.6), inset 0 0 10px rgba(255,255,255,0.8);
         }
 
-        /* Modal 樣式 */
+        /* Modal 修復與優化 */
         .modal {
             display: none;
             position: fixed;
@@ -188,11 +170,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4); /* 背景暗一點，突顯 Modal */
-            backdrop-filter: blur(8px);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.6); /* 加深背景，減少干擾 */
+            z-index: 1000; /* 提高層級，確保在最上層 */
             opacity: 0;
             transition: opacity 0.3s ease;
+            
+            /* 關鍵修復：允許捲動與 Flex 置中 */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            align-items: center; /* 垂直置中 */
+            justify-content: center; /* 水平置中 */
+            padding: 20px 0; /* 預留上下緩衝空間 */
         }
 
         .modal.show {
@@ -200,28 +188,23 @@
         }
 
         .modal-content {
-            /* 極致玻璃 Modal */
-            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            margin: 15% auto;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+            /* 移除內層過重的 backdrop-filter 以避免手機版點擊失效 */
+            /* backdrop-filter: blur(40px); */ 
+            margin: auto; /* 配合 Flexbox 置中 */
             padding: 30px;
             width: 85%;
             max-width: 400px;
             border-radius: 30px;
-            
-            /* 強烈的邊框反光 */
-            border: 1px solid rgba(255,255,255,0.8);
-            border-top: 1px solid #fff;
-            border-left: 1px solid #fff;
-            
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; /* 確保內容層級正確 */
         }
 
         @keyframes modalPop {
-            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .modal h3 {
@@ -247,29 +230,23 @@
             letter-spacing: 0.5px;
         }
 
-        /* 玻璃切割風格的輸入框 */
         select, input {
             width: 100%;
             padding: 14px;
-            
-            /* 內凹玻璃感 */
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.6); /* 稍微不透明一點 */
             border: 1px solid rgba(255, 255, 255, 0.5);
-            border-top: 1px solid rgba(0, 0, 0, 0.05); /* 上方微陰影模擬內凹 */
-            
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
             border-radius: 16px;
-            font-size: 16px;
+            font-size: 16px; /* 16px 防止 iOS 自動縮放 */
             font-weight: 500;
             color: var(--text-main);
             outline: none;
-            transition: all 0.3s;
             -webkit-appearance: none;
             appearance: none;
             box-sizing: border-box;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
         
-        /* 替換 Select 箭頭 */
         .select-wrapper {
             position: relative;
         }
@@ -286,31 +263,29 @@
         }
 
         select:focus, input:focus {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             box-shadow: 0 0 0 4px rgba(0, 91, 234, 0.15);
             border-color: var(--accent-color);
         }
 
-        /* Modal 按鈕群 */
         .modal-actions {
             display: flex;
             gap: 15px;
             margin-top: 30px;
+            /* 確保按鈕有足夠空間點擊 */
+            padding-bottom: 10px; 
         }
 
         .btn-cancel {
             flex: 1;
             padding: 14px;
             border: 1px solid rgba(160, 160, 160, 0.3);
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.5);
             color: var(--text-secondary);
             border-radius: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-cancel:hover {
-            background: rgba(255,255,255,0.5);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-confirm {
@@ -323,14 +298,12 @@
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(0, 91, 234, 0.3);
-            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .btn-confirm:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 91, 234, 0.4);
+        .btn-confirm:active {
+            transform: scale(0.96);
         }
 
-        /* 懸浮玻璃購物車 */
         .cart-bar {
             position: fixed;
             bottom: 25px;
@@ -338,22 +311,17 @@
             transform: translateX(-50%);
             width: calc(100% - 50px);
             max-width: 500px;
-            
-            /* 磨砂玻璃條 */
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            background: rgba(255, 255, 255, 0.85); /* 提高不透明度 */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 15px 20px;
             border-radius: 25px;
-            
-            /* 發光邊緣 */
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            
             display: flex;
             flex-direction: column;
-            z-index: 90;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 彈性動畫 */
+            z-index: 900; /* 確保在 Modal 之下但在內容之上 */
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .cart-bar.hidden {
@@ -384,38 +352,15 @@
             font-weight: 700;
             width: 100%;
             cursor: pointer;
-            
-            /* 按鈕光澤 */
-            box-shadow: 0 8px 20px rgba(56, 249, 215, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
-            
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(56, 249, 215, 0.3);
         }
 
-        /* 店家選擇列表的按鈕樣式差異 */
         #menu-list button.submit-btn {
             background: linear-gradient(90deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
             border: 1px solid rgba(255, 255, 255, 0.8);
             color: var(--text-main);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             margin-bottom: 15px;
-        }
-        #menu-list button.submit-btn:hover {
-             background: rgba(255, 255, 255, 0.95);
-             transform: translateY(-3px);
-             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-        .submit-btn:active {
-            transform: scale(0.97);
-        }
-        
-        .submit-btn:disabled {
-            background: #e0e0e0;
-            color: #999;
-            cursor: not-allowed;
-            box-shadow: none;
         }
 
         .hidden {
@@ -430,12 +375,10 @@
             color: white;
             font-weight: 700;
             font-size: 1.2em;
-            background: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.5);
             padding: 20px 40px;
             border-radius: 40px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 2000;
         }
     </style>
 </head>
@@ -500,8 +443,8 @@
             </div>
 
             <div class="modal-actions">
-                <button onclick="closeModal()" class="btn-cancel">取消</button>
-                <button onclick="confirmItem()" class="btn-confirm">加入購物車</button>
+                <button type="button" onclick="closeModal()" class="btn-cancel">取消</button>
+                <button type="button" onclick="confirmItem()" class="btn-confirm">加入購物車</button>
             </div>
         </div>
     </div>
@@ -509,7 +452,7 @@
     <!-- Cart Bar -->
     <div id="cart-bar" class="cart-bar hidden">
         <div class="cart-total">總計: $<span id="total-price">0</span></div>
-        <button onclick="submitOrder()" class="submit-btn" id="submit-btn">
+        <button type="button" onclick="submitOrder()" class="submit-btn" id="submit-btn">
             送出訂單 (<span id="cart-count">0</span>)
         </button>
     </div>
@@ -523,7 +466,6 @@
         let cart = [];
 
         window.onload = async function () {
-            // Check if API_URL is set
             if (API_URL === 'YOUR_GAS_WEB_APP_URL') {
                 console.warn('Please update API_URL in index.html');
             }
@@ -532,7 +474,6 @@
 
         async function initializeLiff() {
             try {
-                // Try to Initialize LIFF first
                 let isLiffAvailable = false;
                 try {
                     await liff.init({ liffId: "2006764515-B15nDrqX" });
@@ -541,23 +482,14 @@
                     console.log('LIFF init warning:', liffErr);
                 }
 
-                // Get shop parameter from LIFF context or URL
                 if (isLiffAvailable && liff.isInClient()) {
-                    // When opened from LINE, get parameters from LIFF context
                     const context = liff.getContext();
-                    console.log('LIFF Context:', context);
-
-                    // Try to get shop from query string in LIFF URL
                     const liffUrl = window.location.href;
                     const url = new URL(liffUrl);
                     currentShop = url.searchParams.get('shop');
-
-                    console.log('Shop from LIFF URL:', currentShop);
                 } else {
-                    // Direct browser access or LIFF not available
                     const urlParams = new URLSearchParams(window.location.search);
                     currentShop = urlParams.get('shop');
-                    console.log('Shop from URL params:', currentShop);
                 }
 
                 if (currentShop) {
@@ -638,7 +570,6 @@
                 const el = document.createElement('div');
                 el.className = 'menu-item';
 
-                // 計算價格顯示
                 let priceDisplay = '';
                 const hasM = item.priceM && item.priceM !== '-';
                 const hasL = item.priceL && item.priceL !== '-';
@@ -668,7 +599,6 @@
             currentItem = item;
             document.getElementById('modal-item-name').innerText = item.item;
 
-            // 動態生成尺寸選項
             const sizeSelect = document.getElementById('size-select');
             sizeSelect.innerHTML = '';
 
@@ -694,12 +624,11 @@
                 return;
             }
 
-            // 重置數量為 1
             document.getElementById('quantity-input').value = 1;
 
             const modal = document.getElementById('options-modal');
-            modal.style.display = 'block';
-            // Trigger reflow for transition
+            // 改為 Flex 佈局以置中
+            modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('show'), 10);
         }
 
@@ -713,12 +642,13 @@
         }
 
         function confirmItem() {
+            if (!currentItem) return;
+
             const size = document.getElementById('size-select').value;
             const sugar = document.getElementById('sugar-select').value;
             const ice = document.getElementById('ice-select').value;
             const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
 
-            // 根據選擇的尺寸設定價格
             let price = 0;
             if (size === 'M') {
                 price = currentItem.priceM;
@@ -726,7 +656,6 @@
                 price = currentItem.priceL;
             }
 
-            // 根據數量加入購物車（相同配置的多杯飲料）
             for (let i = 0; i < quantity; i++) {
                 cart.push({
                     name: currentItem.item,
@@ -748,7 +677,6 @@
             }, 0);
             document.getElementById('total-price').innerText = total;
 
-            // 計算總杯數
             const totalQuantity = cart.length;
             document.getElementById('cart-count').innerText = totalQuantity;
             
@@ -761,10 +689,8 @@
         }
 
         function getUserId() {
-            // 檢查 localStorage 中是否已有 userId
             let localUserId = localStorage.getItem('drinkOrderUserId');
             if (!localUserId) {
-                // 產生新的唯一 ID (使用時間戳記 + 隨機數)
                 localUserId = 'web_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
                 localStorage.setItem('drinkOrderUserId', localUserId);
             }
@@ -775,22 +701,18 @@
             if (cart.length === 0) return;
 
             const btn = document.getElementById('submit-btn');
-            const originalText = btn.innerText;
             btn.disabled = true;
             btn.innerText = '處理中...';
 
             if (liff.isInClient() && liff.isLoggedIn()) {
-                // LIFF 環境：使用真實的 LINE 使用者資訊
                 liff.getProfile().then(profile => {
                     sendOrderToBackend(profile.userId, profile.displayName);
                 }).catch(err => {
                     console.warn('Profile fetch failed:', err);
-                    // 如果失敗，使用 localStorage 的 ID
                     const fallbackId = getUserId();
                     sendOrderToBackend(fallbackId, 'LINE User (Error)');
                 });
             } else {
-                // 電腦瀏覽器：使用 localStorage 持久化的 ID
                 const webUserId = getUserId();
                 sendOrderToBackend(webUserId, 'Web User');
             }
@@ -811,7 +733,6 @@
             };
 
             try {
-                // Use text/plain to avoid CORS preflight (Simple Request)
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload),
@@ -834,7 +755,6 @@
                 alert('點餐失敗: ' + err);
                 console.error(err);
             } finally {
-                // 檢查按鈕是否還存在（可能在 LIFF 關閉後已被移除）
                 if (btn) {
                     btn.disabled = false;
                     btn.innerText = `送出訂單 (${cart.length})`;
