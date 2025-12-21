@@ -63,7 +63,7 @@
 
         .container {
             max-width: 600px;
-            margin: 0 auto 80px auto; /* Bottom margin for cart bar */
+            margin: 0 auto 100px auto; /* Increased bottom margin for cart bar */
             background: var(--white-glass);
             padding: 25px;
             border-radius: 24px;
@@ -140,7 +140,7 @@
             transform: scale(0.9);
         }
 
-        /* Modal 優化 */
+        /* Modal 優化修正 */
         .modal {
             display: none;
             position: fixed;
@@ -150,18 +150,23 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
-            z-index: 1000;
+            z-index: 2000; /* 提高層級確保在最上層 */
+            overflow-y: auto; /* 允許捲動，解決小螢幕按不到按鈕的問題 */
             animation: fadeIn 0.3s;
+            /* 解決 iOS 點擊穿透問題 */
+            -webkit-overflow-scrolling: touch; 
         }
 
         .modal-content {
             background: white;
-            margin: 15vh auto;
+            /* 改為 10vh 讓它在較矮的手機上也能靠上一點，避免被鍵盤擋住 */
+            margin: 10vh auto 50px auto; 
             padding: 30px;
             width: 85%;
             max-width: 400px;
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            position: relative; /* 確保內容層級正確 */
             animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -235,6 +240,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-confirm {
@@ -248,6 +254,7 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0, 97, 255, 0.3);
             transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-confirm:active {
@@ -294,6 +301,7 @@
             transition: all 0.2s;
             margin-top: 0; /* Override old CSS */
             width: auto; /* Override old CSS */
+            -webkit-tap-highlight-color: transparent;
         }
         
         /* For Shop Selection List */
@@ -330,6 +338,7 @@
             border-radius: 50px;
             backdrop-filter: blur(10px);
             animation: pulse 1.5s infinite;
+            z-index: 1500;
         }
 
         /* Animations */
@@ -410,8 +419,8 @@
             </div>
 
             <div class="modal-buttons">
-                <button onclick="closeModal()" class="btn-cancel">取消</button>
-                <button onclick="confirmItem()" class="btn-confirm">加入購物車</button>
+                <button type="button" onclick="closeModal()" class="btn-cancel">取消</button>
+                <button type="button" onclick="confirmItem()" class="btn-confirm">加入購物車</button>
             </div>
         </div>
     </div>
@@ -419,7 +428,7 @@
     <!-- Cart Bar -->
     <div id="cart-bar" class="cart-bar hidden">
         <div class="cart-total">總計: $<span id="total-price">0</span></div>
-        <button onclick="submitOrder()" class="submit-btn" id="submit-btn">
+        <button type="button" onclick="submitOrder()" class="submit-btn" id="submit-btn">
             送出訂單 (<span id="cart-count">0</span>)
         </button>
     </div>
@@ -619,32 +628,44 @@
         }
 
         function confirmItem() {
-            const size = document.getElementById('size-select').value;
-            const sugar = document.getElementById('sugar-select').value;
-            const ice = document.getElementById('ice-select').value;
-            const quantity = parseInt(document.getElementById('quantity-input').value) || 1;
+            try {
+                const size = document.getElementById('size-select').value;
+                const sugar = document.getElementById('sugar-select').value;
+                const ice = document.getElementById('ice-select').value;
+                const quantityInput = document.getElementById('quantity-input');
+                let quantity = parseInt(quantityInput.value);
 
-            // 根據選擇的尺寸設定價格
-            let price = 0;
-            if (size === 'M') {
-                price = currentItem.priceM;
-            } else if (size === 'L') {
-                price = currentItem.priceL;
+                // 基本驗證
+                if (!quantity || quantity < 1) {
+                    quantity = 1;
+                    quantityInput.value = 1;
+                }
+
+                // 根據選擇的尺寸設定價格
+                let price = 0;
+                if (size === 'M') {
+                    price = currentItem.priceM;
+                } else if (size === 'L') {
+                    price = currentItem.priceL;
+                }
+
+                // 根據數量加入購物車（相同配置的多杯飲料）
+                for (let i = 0; i < quantity; i++) {
+                    cart.push({
+                        name: currentItem.item,
+                        size,
+                        sugar,
+                        ice,
+                        price: price
+                    });
+                }
+
+                updateCartUI();
+                closeModal();
+            } catch (e) {
+                console.error("Add to cart error:", e);
+                alert("加入購物車時發生錯誤，請重試");
             }
-
-            // 根據數量加入購物車（相同配置的多杯飲料）
-            for (let i = 0; i < quantity; i++) {
-                cart.push({
-                    name: currentItem.item,
-                    size,
-                    sugar,
-                    ice,
-                    price: price
-                });
-            }
-
-            updateCartUI();
-            closeModal();
         }
 
         function updateCartUI() {
