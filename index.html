@@ -5,35 +5,95 @@
     <base target="_top">
     <!-- LIFF SDK -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>點餐系統</title>
     <style>
+        :root {
+            --primary-color: #0061ff;
+            --secondary-color: #60efff;
+            --accent-color: #00B900; /* LINE Green preserved for familiarity */
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white-glass: rgba(255, 255, 255, 0.92);
+            --blur-strength: 16px;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景幾何裝飾圖形 */
+        .bg-shape {
+            position: fixed;
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(60px);
+            opacity: 0.6;
+        }
+
+        .shape-1 {
+            top: -100px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: #ffffff;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .shape-2 {
+            bottom: -50px;
+            left: -100px;
+            width: 250px;
+            height: 250px;
+            background: #60efff;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 30px); }
         }
 
         .container {
             max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 80px auto; /* Bottom margin for cart bar */
+            background: var(--white-glass);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(var(--blur-strength));
+            -webkit-backdrop-filter: blur(var(--blur-strength));
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         h2 {
-            color: #333;
+            color: var(--text-dark);
             text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
+        /* 菜單列表樣式 */
         .menu-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 18px 0;
+            transition: transform 0.2s;
+        }
+
+        .menu-item:hover {
+            transform: translateX(5px);
         }
 
         .menu-item:last-child {
@@ -42,28 +102,45 @@
 
         .item-info {
             flex: 1;
+            padding-right: 15px;
         }
 
         .item-name {
-            font-weight: bold;
-            font-size: 1.1em;
+            font-weight: 700;
+            font-size: 1.15em;
+            color: var(--text-dark);
+            margin-bottom: 4px;
         }
 
         .item-price {
-            color: #e54d42;
-            font-weight: bold;
+            color: #ef4444; /* Bright Red/Pink */
+            font-weight: 600;
+            font-size: 0.95em;
         }
 
         .add-btn {
-            background: #00B900;
+            background: linear-gradient(135deg, var(--accent-color), #009900);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             cursor: pointer;
+            font-size: 20px;
+            line-height: 36px;
+            padding: 0;
+            box-shadow: 0 4px 10px rgba(0, 185, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Modal */
+        .add-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Modal 優化 */
         .modal {
             display: none;
             position: fixed;
@@ -71,85 +148,220 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
         }
 
         .modal-content {
             background: white;
-            margin: 20% auto;
-            padding: 20px;
+            margin: 15vh auto;
+            padding: 30px;
             width: 85%;
-            border-radius: 12px;
+            max-width: 400px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .modal h3 {
             margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            color: var(--text-dark);
+            text-align: center;
         }
 
         .option-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .option-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.9rem;
         }
 
-        select,
-        input {
+        /* 現代化表單控制項 */
+        select, input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
             box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #f9fafb;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s;
+            -webkit-appearance: none; /* Remove default styling */
+            appearance: none;
         }
 
+        /* 自定義 select 箭頭 */
+        .option-group {
+            position: relative;
+        }
+        
+        select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 10px auto;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(0, 97, 255, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: var(--text-light);
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 97, 255, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-confirm:active {
+            transform: scale(0.98);
+        }
+
+        /* 購物車懸浮島 */
         .cart-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            padding: 15px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 550px;
+            background: rgba(30, 30, 30, 0.95);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
+            z-index: 900;
+            backdrop-filter: blur(10px);
+            animation: slideUpBottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .cart-total {
-            font-weight: bold;
-            font-size: 1.2em;
+            font-weight: 700;
+            font-size: 1.1em;
+            color: white;
         }
 
         .submit-btn {
-            background: #00B900;
+            background: var(--accent-color);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 1em;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 0.95em;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 185, 0, 0.4);
+            transition: all 0.2s;
+            margin-top: 0; /* Override old CSS */
+            width: auto; /* Override old CSS */
+        }
+        
+        /* For Shop Selection List */
+        #menu-list button.submit-btn {
             width: 100%;
-            margin-top: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 16px;
+        }
+        
+        #menu-list button.submit-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         #loading {
-            text-align: center;
-            margin-top: 50px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+            padding: 20px 40px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            animation: pulse 1.5s infinite;
         }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideUpBottom {
+            from { transform: translate(-50%, 100px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
     </style>
 </head>
 
 <body>
+    <!-- 幾何背景裝飾 -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
     <div id="loading">載入中...</div>
 
     <div id="app" class="container hidden">
@@ -194,26 +406,22 @@
 
             <div class="option-group">
                 <label>數量</label>
-                <input type="number" id="quantity-input" value="1" min="1" max="99"
-                    style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                <input type="number" id="quantity-input" value="1" min="1" max="99">
             </div>
 
-            <div style="display: flex; gap: 10px;">
-                <button onclick="closeModal()"
-                    style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px;">取消</button>
-                <button onclick="confirmItem()"
-                    style="flex: 1; padding: 10px; background-color: #00B900; color: white; border: none; border-radius: 4px;">加入購物車</button>
+            <div class="modal-buttons">
+                <button onclick="closeModal()" class="btn-cancel">取消</button>
+                <button onclick="confirmItem()" class="btn-confirm">加入購物車</button>
             </div>
         </div>
     </div>
 
     <!-- Cart Bar -->
     <div id="cart-bar" class="cart-bar hidden">
-        <div style="width: 100%">
-            <div class="cart-total">總計: $<span id="total-price">0</span></div>
-            <button onclick="submitOrder()" class="submit-btn" id="submit-btn">送出訂單 (<span
-                    id="cart-count">0</span>)</button>
-        </div>
+        <div class="cart-total">總計: $<span id="total-price">0</span></div>
+        <button onclick="submitOrder()" class="submit-btn" id="submit-btn">
+            送出訂單 (<span id="cart-count">0</span>)
+        </button>
     </div>
 
     <script>
@@ -226,7 +434,7 @@
 
         window.onload = async function () {
             // Check if API_URL is set
-            if (API_URL === 'https://script.google.com/macros/s/AKfycbwqFl5mfTTi1kRCffudjhzWZZpUZDWcxBx7EcZrJ6PBJJHZTQ8oyIK_Jl26RUMIhtHhbA/exec') {
+            if (API_URL === 'YOUR_GAS_WEB_APP_URL') {
                 console.warn('Please update API_URL in index.html');
             }
             await initializeLiff();
@@ -309,15 +517,14 @@
             list.innerHTML = '';
 
             if (!shops || shops.length === 0) {
-                list.innerHTML = '<p style="text-align: center;">找不到任何店家，請檢查 API 回傳。</p>';
+                list.innerHTML = '<p style="text-align: center; color: var(--text-light);">找不到任何店家，請檢查 API 回傳。</p>';
                 return;
             }
 
             shops.forEach(shop => {
                 const btn = document.createElement('button');
                 btn.className = 'submit-btn';
-                btn.style.marginBottom = '10px';
-                btn.style.backgroundColor = '#00B900';
+                // 移除內聯樣式，改用 CSS class 控制
                 btn.innerText = shop;
                 btn.onclick = function () {
                     currentShop = shop;
@@ -362,7 +569,9 @@
                         <div class="item-name">${item.item}</div>
                         <div class="item-price">${priceDisplay}</div>
                     </div>
-                    <button class="add-btn" onclick='openModal(${JSON.stringify(item)})'>+</button>
+                    <button class="add-btn" onclick='openModal(${JSON.stringify(item)})'>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
                 `;
                 list.appendChild(el);
             });
