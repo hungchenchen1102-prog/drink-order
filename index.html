@@ -7,37 +7,102 @@
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>點餐系統</title>
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --primary-color: #00B900;
+            --text-color: #2c3e50;
+            --accent-color: #e54d42;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background Blobs */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(60px);
+            opacity: 0.6;
+            animation: float 10s infinite alternate;
+        }
+
+        body::before {
+            background: #ff9a9e;
+            top: -50px;
+            left: -50px;
+        }
+
+        body::after {
+            background: #a18cd1;
+            bottom: -50px;
+            right: -50px;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
         }
 
         .container {
             max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 80px auto; /* Added bottom margin for cart bar */
+            /* Glassmorphism Effect */
+            background: rgba(255, 255, 255, 0.35);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 25px;
         }
 
         h2 {
-            color: #333;
+            color: var(--text-color);
             text-align: center;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.5);
         }
 
+        /* Menu Items as Cards */
         .menu-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.4);
+            margin-bottom: 15px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
-        .menu-item:last-child {
-            border-bottom: none;
+        .menu-item:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
         }
 
         .item-info {
@@ -45,25 +110,41 @@
         }
 
         .item-name {
-            font-weight: bold;
+            font-weight: 600;
             font-size: 1.1em;
+            color: #1a1a1a;
+            margin-bottom: 4px;
         }
 
         .item-price {
-            color: #e54d42;
-            font-weight: bold;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.95em;
         }
 
         .add-btn {
-            background: #00B900;
-            color: white;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: #0f5132;
             border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            line-height: 1;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(67, 233, 123, 0.3);
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 4px; /* visually align + */
         }
 
-        /* Modal */
+        .add-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Modal styling */
         .modal {
             display: none;
             position: fixed;
@@ -71,86 +152,209 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.2); /* Lighter dim */
+            backdrop-filter: blur(5px); /* Blur the background content */
             z-index: 100;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
-            background: white;
-            margin: 20% auto;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            margin: 15vh auto;
+            padding: 30px;
             width: 85%;
-            border-radius: 12px;
+            max-width: 400px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal h3 {
             margin-top: 0;
+            text-align: center;
+            color: #333;
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .option-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .option-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9em;
         }
 
-        select,
-        input {
+        /* Glassy Inputs */
+        select, input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 12px;
+            background: rgba(240, 240, 240, 0.6);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 12px;
             box-sizing: border-box;
+            font-size: 16px; /* Prevents zoom on iOS */
+            outline: none;
+            transition: 0.3s;
+            color: #333;
+            appearance: none; /* Remove default arrow */
         }
 
+        /* Custom dropdown arrow */
+        .option-group select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+        }
+
+        select:focus, input:focus {
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 185, 0, 0.2);
+        }
+
+        /* Modal Buttons */
+        .modal-btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 185, 0, 0.3);
+            cursor: pointer;
+        }
+
+        /* Cart Bar - Glassmorphism */
         .cart-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
-            padding: 15px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 560px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 15px 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.6);
+            z-index: 90;
         }
 
         .cart-total {
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1.2em;
+            color: #333;
         }
 
         .submit-btn {
-            background: #00B900;
+            background: linear-gradient(135deg, #00B900 0%, #009900 100%);
             color: white;
             border: none;
             padding: 12px 24px;
-            border-radius: 6px;
+            border-radius: 12px;
             font-size: 1em;
             font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 185, 0, 0.3);
+            cursor: pointer;
+            transition: 0.3s;
+            width: auto; /* Allow auto width inside cart bar */
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            box-shadow: none;
+        }
+
+        /* Shop Selection Buttons */
+        #menu-list .submit-btn {
             width: 100%;
-            margin-top: 10px;
+            margin-bottom: 15px !important;
+            background: rgba(255, 255, 255, 0.5);
+            color: #333;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        #menu-list .submit-btn:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         #loading {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 50vh;
+            transform: translateY(-50%);
+            font-weight: bold;
+            color: rgba(0,0,0,0.5);
+            font-size: 1.2em;
+        }
+        
+        /* Spinner for loading */
+        #loading::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 
 <body>
-    <div id="loading">載入中...</div>
+    <div id="loading">載入菜單中</div>
 
     <div id="app" class="container hidden">
         <h2 id="shop-title">飲料店</h2>
@@ -165,8 +369,7 @@
             <div class="option-group">
                 <label>尺寸</label>
                 <select id="size-select">
-                    <option value="M">中杯 (M)</option>
-                    <option value="L">大杯 (L)</option>
+                    <!-- Options injected by JS -->
                 </select>
             </div>
 
@@ -194,26 +397,22 @@
 
             <div class="option-group">
                 <label>數量</label>
-                <input type="number" id="quantity-input" value="1" min="1" max="99"
-                    style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;">
+                <input type="number" id="quantity-input" value="1" min="1" max="99">
             </div>
 
-            <div style="display: flex; gap: 10px;">
-                <button onclick="closeModal()"
-                    style="flex: 1; padding: 10px; border: 1px solid #ddd; background: white; border-radius: 4px;">取消</button>
-                <button onclick="confirmItem()"
-                    style="flex: 1; padding: 10px; background-color: #00B900; color: white; border: none; border-radius: 4px;">加入購物車</button>
+            <div class="modal-btn-group">
+                <button onclick="closeModal()" class="btn-cancel">取消</button>
+                <button onclick="confirmItem()" class="btn-confirm">加入購物車</button>
             </div>
         </div>
     </div>
 
     <!-- Cart Bar -->
     <div id="cart-bar" class="cart-bar hidden">
-        <div style="width: 100%">
-            <div class="cart-total">總計: $<span id="total-price">0</span></div>
-            <button onclick="submitOrder()" class="submit-btn" id="submit-btn">送出訂單 (<span
-                    id="cart-count">0</span>)</button>
-        </div>
+        <div class="cart-total">總計: $<span id="total-price">0</span></div>
+        <button onclick="submitOrder()" class="submit-btn" id="submit-btn">
+            送出訂單 (<span id="cart-count">0</span>)
+        </button>
     </div>
 
     <script>
@@ -293,6 +492,8 @@
 
         async function loadMenu(shop) {
             document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('app').classList.add('hidden'); // Hide app while loading new menu
+            
             try {
                 const res = await fetch(`${API_URL}?action=getMenu&shop=${encodeURIComponent(shop)}`);
                 if (!res.ok) throw new Error('Network response was not ok');
@@ -300,7 +501,9 @@
                 renderMenu(menuItems);
             } catch (err) {
                 alert("讀取菜單失敗: " + err);
+            } finally {
                 document.getElementById('loading').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
             }
         }
 
@@ -315,9 +518,7 @@
 
             shops.forEach(shop => {
                 const btn = document.createElement('button');
-                btn.className = 'submit-btn';
-                btn.style.marginBottom = '10px';
-                btn.style.backgroundColor = '#00B900';
+                btn.className = 'submit-btn'; // Will take specific style from CSS override
                 btn.innerText = shop;
                 btn.onclick = function () {
                     currentShop = shop;
@@ -329,12 +530,11 @@
         }
 
         function renderMenu(menuItems) {
-            document.getElementById('loading').classList.add('hidden');
             const list = document.getElementById('menu-list');
             list.innerHTML = '';
 
             if (!menuItems || menuItems.length === 0) {
-                list.innerHTML = `<p style="text-align: center; color: #888;">"${currentShop}" 暫無菜單</p>`;
+                list.innerHTML = `<p style="text-align: center; color: #555;">"${currentShop}" 暫無菜單</p>`;
                 return;
             }
 
@@ -449,10 +649,11 @@
             const totalQuantity = cart.length;
             document.getElementById('cart-count').innerText = totalQuantity;
 
+            const cartBar = document.getElementById('cart-bar');
             if (cart.length > 0) {
-                document.getElementById('cart-bar').classList.remove('hidden');
+                cartBar.classList.remove('hidden');
             } else {
-                document.getElementById('cart-bar').classList.add('hidden');
+                cartBar.classList.add('hidden');
             }
         }
 
@@ -471,6 +672,7 @@
             if (cart.length === 0) return;
 
             const btn = document.getElementById('submit-btn');
+            const originalText = btn.innerText;
             btn.disabled = true;
             btn.innerText = '處理中...';
 
