@@ -688,13 +688,23 @@
                 const itemPrice = typeof item.price === 'string' ? parseInt(item.price) : item.price;
                 return sum + (itemPrice || 0);
             }, 0);
-            document.getElementById('total-price').innerText = total;
+            
+            // 安全檢查：確保元素存在才更新
+            const totalPriceEl = document.getElementById('total-price');
+            const cartCountEl = document.getElementById('cart-count');
+            const cartBar = document.getElementById('cart-bar');
+            
+            if (!totalPriceEl || !cartCountEl || !cartBar) {
+                // DOM元素不存在（可能在LIFF視窗關閉中），直接返回
+                return;
+            }
+            
+            totalPriceEl.innerText = total;
 
             // 計算總杯數
             const totalQuantity = cart.length;
-            document.getElementById('cart-count').innerText = totalQuantity;
+            cartCountEl.innerText = totalQuantity;
 
-            const cartBar = document.getElementById('cart-bar');
             if (cart.length > 0) {
                 cartBar.classList.remove('hidden');
             } else {
@@ -765,15 +775,15 @@
                 if (result.status === 'success') {
                     alert('點餐成功！');
                     cart = [];
-                    updateCartUI();
                     
-                    // 在 LIFF 環境中關閉視窗並提前返回，避免執行 finally 區塊
+                    // 在 LIFF 環境中立即關閉視窗，不更新UI
                     if (liff.isInClient()) {
                         liff.closeWindow();
                         return;
                     }
                     
-                    // 非 LIFF 環境：重置按鈕狀態
+                    // 非 LIFF 環境：更新購物車UI並重置按鈕狀態
+                    updateCartUI();
                     btn.disabled = false;
                     btn.innerText = `送出訂單 (0)`;
                 } else {
@@ -783,9 +793,11 @@
                 alert('點餐失敗: ' + err);
                 console.error(err);
                 
-                // 錯誤時恢復按鈕狀態
-                btn.disabled = false;
-                btn.innerText = `送出訂單 (${cart.length})`;
+                // 錯誤時恢復按鈕狀態（安全檢查）
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = `送出訂單 (${cart.length})`;
+                }
             }
         }
     </script>
