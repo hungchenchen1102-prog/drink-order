@@ -1093,32 +1093,68 @@
 
         // Reorder Last Order
         function checkReorderButton() {
-            const lastOrder = localStorage.getItem('lastOrder');
-            if (lastOrder) {
-                document.getElementById('reorder-btn').classList.remove('hidden');
-            }
-        }
-
-        function reorderLast() {
             const lastOrderStr = localStorage.getItem('lastOrder');
-            if (!lastOrderStr) {
-                alert('沒有找到上次訂單');
+            if (!lastOrderStr || !currentShop) {
+                document.getElementById('reorder-btn').classList.add('hidden');
                 return;
             }
 
             try {
-                const lastOrder = JSON.parse(lastOrderStr);
-                cart = [...lastOrder];
-                updateCartUI();
-                alert(`已加入 ${cart.length} 項商品到購物車！`);
+                const lastOrderData = JSON.parse(lastOrderStr);
+                // 檢查上次訂單的店家是否與當前店家相同
+                if (lastOrderData.shop === currentShop) {
+                    document.getElementById('reorder-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('reorder-btn').classList.add('hidden');
+                }
             } catch (err) {
-                alert('讀取上次訂單失敗');
-                console.error(err);
+                console.error('讀取上次訂單失敗:', err);
+                document.getElementById('reorder-btn').classList.add('hidden');
             }
         }
 
+// 在 index_new.html 的第 1116-1132 行
+// 找到 reorderLast 函數並替換為以下代碼：
+
+function reorderLast() {
+    const lastOrderStr = localStorage.getItem('lastOrder');
+    if (!lastOrderStr) {
+        alert('沒有找到上次訂單');
+        return;
+    }
+
+    try {
+        const lastOrderData = JSON.parse(lastOrderStr);
+        
+        // 檢查是否有shop屬性（新格式）
+        if (lastOrderData.shop) {
+            // 新格式：檢查店家是否一致
+            if (lastOrderData.shop !== currentShop) {
+                alert(`上次訂單是在「${lastOrderData.shop}」\n目前在「${currentShop}」\n無法重新訂購不同店家的訂單`);
+                return;
+            }
+            cart = [...lastOrderData.items];
+        } else {
+            // 舊格式兼容：直接是陣列
+            cart = [...lastOrderData];
+        }
+        
+        updateCartUI();
+        alert(`已加入${cart.length}項商品到購物車！`);
+    } catch (err) {
+        alert('讀取上次訂單失敗');
+        console.error(err);
+    }
+}
+
         function saveLastOrder() {
-            localStorage.setItem('lastOrder', JSON.stringify(cart));
+            // 儲存訂單時同時記錄店家資訊
+            const orderWithShop = {
+                shop: currentShop,
+                items: cart
+            };
+            localStorage.setItem('lastOrder', JSON.stringify(orderWithShop));
+            console.log('已儲存上次訂單，店家:', currentShop);
         }
 
         function openModal(item) {
