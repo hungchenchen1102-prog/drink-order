@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>點餐系統</title>
     <!-- Google Fonts for better typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --glass-bg: rgba(255, 255, 255, 0.25);
@@ -59,8 +60,13 @@
         }
 
         @keyframes float {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(30px, 30px); }
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(30px, 30px);
+            }
         }
 
         .container {
@@ -104,7 +110,7 @@
             width: 100%;
             padding: 12px 40px 12px 15px;
             background: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255,255,255,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 12px;
             font-size: 15px;
             box-sizing: border-box;
@@ -128,7 +134,8 @@
             font-size: 18px;
         }
 
-        .filter-btn, .reorder-btn {
+        .filter-btn,
+        .reorder-btn {
             padding: 10px 18px;
             border-radius: 12px;
             font-size: 14px;
@@ -141,7 +148,7 @@
 
         .filter-btn {
             background: rgba(255, 255, 255, 0.5);
-            border: 1px solid rgba(255,255,255,0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             color: #333;
         }
 
@@ -157,7 +164,8 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        .reorder-btn:active, .filter-btn:active {
+        .reorder-btn:active,
+        .filter-btn:active {
             transform: scale(0.98);
         }
 
@@ -172,14 +180,14 @@
             border-radius: 15px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
             touch-action: manipulation;
         }
 
         .menu-item:hover {
             transform: translateY(-2px);
             background: rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
         }
 
         .item-info {
@@ -229,8 +237,15 @@
         }
 
         @keyframes heartBeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
         }
 
         .add-btn {
@@ -274,8 +289,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .modal-content {
@@ -286,22 +306,29 @@
             width: 85%;
             max-width: 400px;
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.8);
             animation: slideUp 0.3s;
             position: relative;
         }
 
         @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal h3 {
             margin-top: 0;
             text-align: center;
             color: #333;
-            border-bottom: 2px solid rgba(0,0,0,0.05);
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
@@ -318,11 +345,12 @@
             font-size: 0.9em;
         }
 
-        select, input[type="number"] {
+        select,
+        input[type="number"] {
             width: 100%;
             padding: 12px;
             background: rgba(240, 240, 240, 0.8);
-            border: 1px solid rgba(0,0,0,0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             box-sizing: border-box;
             font-size: 16px;
@@ -339,7 +367,8 @@
             background-size: 16px;
         }
 
-        select:focus, input:focus {
+        select:focus,
+        input:focus {
             background: white;
             box-shadow: 0 0 0 3px rgba(0, 185, 0, 0.2);
             border-color: var(--primary-color);
@@ -351,7 +380,8 @@
             margin-top: 30px;
         }
 
-        .btn-cancel, .btn-confirm {
+        .btn-cancel,
+        .btn-confirm {
             flex: 1;
             padding: 14px;
             border-radius: 12px;
@@ -401,7 +431,7 @@
             width: 90%;
             max-width: 500px;
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.8);
             animation: slideUp 0.3s;
         }
@@ -420,7 +450,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .cart-item-info {
@@ -467,8 +497,12 @@
             color: white;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
 
         .qty-btn:active {
@@ -491,11 +525,23 @@
             cursor: pointer;
             font-size: 18px;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .remove-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
         .remove-btn:hover {
             background: var(--accent-color);
-            color: white;
+        }
+
+        .remove-btn:hover svg {
+            fill: white;
         }
 
         .empty-cart {
@@ -512,7 +558,7 @@
         .note-group {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 2px solid rgba(0,0,0,0.05);
+            border-top: 2px solid rgba(0, 0, 0, 0.05);
         }
 
         .note-group label {
@@ -527,7 +573,7 @@
             width: 100%;
             padding: 12px;
             background: rgba(240, 240, 240, 0.8);
-            border: 1px solid rgba(0,0,0,0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             box-sizing: border-box;
             font-size: 15px;
@@ -569,7 +615,7 @@
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
-            border: 1px solid rgba(255,255,255,0.8);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             z-index: 900;
             padding-bottom: max(15px, env(safe-area-inset-bottom));
             margin-bottom: env(safe-area-inset-bottom);
@@ -616,8 +662,8 @@
             margin-bottom: 15px !important;
             background: rgba(255, 255, 255, 0.6);
             color: #333;
-            border: 1px solid rgba(255,255,255,0.6);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         #menu-list .submit-btn:hover {
@@ -663,8 +709,13 @@
         }
 
         @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
         }
 
         .no-results {
@@ -687,7 +738,7 @@
             margin-top: 50vh;
             transform: translateY(-50%);
             font-weight: bold;
-            color: rgba(0,0,0,0.5);
+            color: rgba(0, 0, 0, 0.5);
             font-size: 1.2em;
         }
     </style>
@@ -698,7 +749,7 @@
 
     <div id="app" class="container hidden">
         <h2 id="shop-title">飲料店</h2>
-        
+
         <!-- Controls Bar: Search, Filter, Reorder -->
         <div class="controls-bar hidden" id="controls-bar">
             <div class="search-box">
@@ -709,7 +760,7 @@
             <button class="filter-btn" onclick="filterMenu('favorites')">❤️ 收藏</button>
             <button class="reorder-btn hidden" id="reorder-btn" onclick="reorderLast()">🔄 重新訂購</button>
         </div>
-        
+
         <div id="menu-list"></div>
     </div>
 
@@ -764,13 +815,14 @@
         <div class="cart-modal-content">
             <h3>🛒 購物車</h3>
             <div class="cart-items-list" id="cart-items-list"></div>
-            
+
             <div class="note-group">
                 <label>訂單備註（選填）</label>
-                <textarea id="order-note" placeholder="例如：請多給吸管、辦公室外送等..." maxlength="200" oninput="updateCharCounter()"></textarea>
+                <textarea id="order-note" placeholder="例如：請多給吸管、辦公室外送等..." maxlength="200"
+                    oninput="updateCharCounter()"></textarea>
                 <div class="char-counter"><span id="char-count">0</span>/200</div>
             </div>
-            
+
             <div class="modal-btn-group">
                 <button onclick="closeCartModal()" class="btn-cancel">繼續點餐</button>
                 <button onclick="submitOrderFromCart()" class="btn-confirm" id="cart-submit-btn">送出訂單</button>
@@ -859,7 +911,7 @@
         async function loadMenu(shop) {
             renderSkeletonLoading();
             document.getElementById('controls-bar').classList.add('hidden');
-            
+
             try {
                 const res = await fetch(`${API_URL}?action=getMenu&shop=${encodeURIComponent(shop)}`);
                 if (!res.ok) throw new Error('Network response was not ok');
@@ -867,7 +919,7 @@
                 allMenuItems = menuItems;
                 renderMenu(menuItems);
                 document.getElementById('controls-bar').classList.remove('hidden');
-                
+
                 // Setup search listener
                 document.getElementById('search-input').addEventListener('input', (e) => {
                     searchMenu(e.target.value);
@@ -882,7 +934,7 @@
         function renderSkeletonLoading() {
             const list = document.getElementById('menu-list');
             list.innerHTML = '';
-            
+
             for (let i = 0; i < 5; i++) {
                 const skeleton = document.createElement('div');
                 skeleton.className = 'skeleton-item';
@@ -976,16 +1028,16 @@
 
         function toggleFavorite(itemName, event) {
             event.stopPropagation();
-            
+
             const index = favorites.indexOf(itemName);
             if (index > -1) {
                 favorites.splice(index, 1);
             } else {
                 favorites.push(itemName);
             }
-            
+
             saveFavorites();
-            
+
             // Re-render menu to update icons
             if (currentFilter === 'all') {
                 renderMenu(allMenuItems);
@@ -996,13 +1048,13 @@
 
         function filterMenu(type) {
             currentFilter = type;
-            
+
             // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
-            
+
             if (type === 'all') {
                 renderMenu(allMenuItems);
             } else if (type === 'favorites') {
@@ -1018,7 +1070,7 @@
 
         function searchMenu(keyword) {
             keyword = keyword.trim().toLowerCase();
-            
+
             if (keyword === '') {
                 if (currentFilter === 'all') {
                     renderMenu(allMenuItems);
@@ -1027,10 +1079,10 @@
                 }
                 return;
             }
-            
+
             let itemsToSearch = currentFilter === 'all' ? allMenuItems : allMenuItems.filter(item => favorites.includes(item.item));
             const filtered = itemsToSearch.filter(item => item.item.toLowerCase().includes(keyword));
-            
+
             if (filtered.length === 0) {
                 const list = document.getElementById('menu-list');
                 list.innerHTML = '<div class="no-results"><div class="no-results-icon">🔍</div><p>找不到符合的飲料</p></div>';
@@ -1053,7 +1105,7 @@
                 alert('沒有找到上次訂單');
                 return;
             }
-            
+
             try {
                 const lastOrder = JSON.parse(lastOrderStr);
                 cart = [...lastOrder];
@@ -1147,15 +1199,15 @@
                 const itemPrice = typeof item.price === 'string' ? parseInt(item.price) : item.price;
                 return sum + (itemPrice || 0);
             }, 0);
-            
+
             const totalPriceEl = document.getElementById('total-price');
             const cartCountEl = document.getElementById('cart-count');
             const cartBar = document.getElementById('cart-bar');
-            
+
             if (!totalPriceEl || !cartCountEl || !cartBar) {
                 return;
             }
-            
+
             totalPriceEl.innerText = total;
             const totalQuantity = cart.length;
             cartCountEl.innerText = totalQuantity;
@@ -1181,12 +1233,12 @@
 
         function renderCartItems() {
             const list = document.getElementById('cart-items-list');
-            
+
             if (cart.length === 0) {
                 list.innerHTML = '<div class="empty-cart"><div class="empty-cart-icon">🛒</div><p>購物車是空的<br>快去選購美味飲料吧！</p></div>';
                 return;
             }
-            
+
             // Group items by identical specs
             const groupedItems = {};
             cart.forEach((item, index) => {
@@ -1201,13 +1253,13 @@
                 groupedItems[key].indices.push(index);
                 groupedItems[key].count++;
             });
-            
+
             list.innerHTML = '';
-            
+
             Object.values(groupedItems).forEach(group => {
                 const el = document.createElement('div');
                 el.className = 'cart-item';
-                
+
                 el.innerHTML = `
                     <div class="cart-item-info">
                         <div class="cart-item-name">${group.name}</div>
@@ -1216,14 +1268,18 @@
                     </div>
                     <div class="cart-item-actions">
                         <div class="qty-control">
-                            <button class="qty-btn" onclick='updateGroupQuantity(${JSON.stringify(group.indices)}, -1)'>−</button>
+                            <button class="qty-btn" onclick='updateGroupQuantity(${JSON.stringify(group.indices)}, -1)'>－</button>
                             <span class="qty-display">${group.count}</span>
-                            <button class="qty-btn" onclick='updateGroupQuantity(${JSON.stringify(group.indices)}, 1)'>+</button>
+                            <button class="qty-btn" onclick='updateGroupQuantity(${JSON.stringify(group.indices)}, 1)'>＋</button>
                         </div>
-                        <button class="remove-btn" onclick='removeGroup(${JSON.stringify(group.indices)})'>🗑️</button>
+                        <button class="remove-btn" onclick='removeGroup(${JSON.stringify(group.indices)})'>
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                        </button>
                     </div>
                 `;
-                
+
                 list.appendChild(el);
             });
         }
@@ -1232,13 +1288,13 @@
             if (delta > 0) {
                 // Add one more of the same item
                 const templateItem = cart[indices[0]];
-                cart.push({...templateItem});
+                cart.push({ ...templateItem });
             } else if (delta < 0 && indices.length > 0) {
                 // Remove one
                 const indexToRemove = indices[indices.length - 1];
                 cart.splice(indexToRemove, 1);
             }
-            
+
             updateCartUI();
             renderCartItems();
         }
@@ -1249,7 +1305,7 @@
             indices.forEach(index => {
                 cart.splice(index, 1);
             });
-            
+
             updateCartUI();
             renderCartItems();
         }
@@ -1265,7 +1321,7 @@
                 closeCartModal();
                 return;
             }
-            
+
             closeCartModal();
             submitOrder();
         }
@@ -1306,7 +1362,7 @@
         async function sendOrderToBackend(userId, userName) {
             const btn = document.getElementById('cart-submit-btn') || document.getElementById('submit-btn-dummy');
             const orderNote = document.getElementById('order-note') ? document.getElementById('order-note').value.trim() : '';
-            
+
             const orderData = {
                 userId: userId,
                 userName: userName,
@@ -1314,6 +1370,11 @@
                 items: cart,
                 note: orderNote
             };
+
+            // 調試日誌：顯示訂單資料
+            console.log('=== 訂單資料 ===');
+            console.log('備註內容:', orderNote);
+            console.log('完整訂單:', orderData);
 
             const payload = {
                 action: 'saveOrder',
@@ -1333,18 +1394,18 @@
                     alert('點餐成功！');
                     saveLastOrder(); // Save for reorder function
                     cart = [];
-                    
+
                     if (liff.isInClient()) {
                         liff.closeWindow();
                         return;
                     }
-                    
+
                     updateCartUI();
                     if (btn) {
                         btn.disabled = false;
                         btn.innerText = `送出訂單 (0)`;
                     }
-                    
+
                     // Clear note
                     if (document.getElementById('order-note')) {
                         document.getElementById('order-note').value = '';
@@ -1356,7 +1417,7 @@
             } catch (err) {
                 alert('點餐失敗: ' + err);
                 console.error(err);
-                
+
                 if (btn) {
                     btn.disabled = false;
                     btn.innerText = `送出訂單 (${cart.length})`;
